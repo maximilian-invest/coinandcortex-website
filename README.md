@@ -124,3 +124,14 @@ PDF anywhere in this repo or in `dist/` — only the free checklist ships with t
 
 - **Permanent Marker** (`src/assets/fonts/PermanentMarker-Regular.woff2`) — Apache License 2.0.
   Used for headings and the logo wordmark only; body text uses the system font stack.
+
+## Paid kit download (Switching Day Kit)
+
+The kit ZIP is never committed in plain form. `private/kit.zip.enc` is the ZIP
+encrypted with `openssl enc -aes-256-cbc -pbkdf2 -iter 200000` (key = repo
+secret `KIT_ZIP_KEY`). The Pages workflow decrypts it to
+`/dl/<KIT_DL_TOKEN>/switching-day-kit.zip` (token = repo secret
+`KIT_DL_TOKEN`), after the link check, so it is not in the sitemap and
+`/dl/` is disallowed in robots.txt. That URL is the Stripe Payment Link's
+after-payment confirmation link. To update the kit: re-encrypt the new ZIP with
+the same key, commit `private/kit.zip.enc`, push.

@@ -24,6 +24,7 @@ const DIST = path.join(ROOT, "dist");
 const ALLOWED_HOSTS = new Set([
   "youtube.com",
   "www.youtube.com",
+  "buy.stripe.com",
   "youtu.be",
   "stripe.com",
   "www.stripe.com",

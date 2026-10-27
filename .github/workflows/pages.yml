@@ -27,6 +27,21 @@ jobs:
         run: node build.mjs
       - name: Check links
         run: node scripts/check-links.mjs
+      # The paid kit ZIP is committed only AES-encrypted (private/kit.zip.enc).
+      # It is decrypted into an unguessable path that exists only in the
+      # deployed artifact. Key and path token live in repo secrets.
+      - name: Inject kit download
+        env:
+          KIT_ZIP_KEY: ${{ secrets.KIT_ZIP_KEY }}
+          KIT_DL_TOKEN: ${{ secrets.KIT_DL_TOKEN }}
+        run: |
+          if [ -z "$KIT_ZIP_KEY" ] || [ -z "$KIT_DL_TOKEN" ]; then
+            echo "::warning::KIT secrets missing; kit download not deployed"; exit 0
+          fi
+          mkdir -p "dist/dl/$KIT_DL_TOKEN"
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
+            -in private/kit.zip.enc -out "dist/dl/$KIT_DL_TOKEN/switching-day-kit.zip" -pass env:KIT_ZIP_KEY
+          unzip -tq "dist/dl/$KIT_DL_TOKEN/switching-day-kit.zip"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

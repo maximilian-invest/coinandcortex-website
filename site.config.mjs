@@ -17,10 +17,10 @@ export default {
   // While this starts with "#", the buy button still renders but shows a small
   // "Checkout opens soon" note and points to the free checklist as alternative.
   // Replace with the real https Stripe Payment Link before launch.
-  STRIPE_KIT_LINK: "#stripe-link-pending",
+  STRIPE_KIT_LINK: "https://buy.stripe.com/eVq4gy5LLd68cIv5In08g00",
 
   // Display price string for the kit (shown as-is; not used for any maths).
-  KIT_PRICE: "[price]",
+  KIT_PRICE: "7 €",
 
   // ---------------------------------------------------------------------------
   // Contact & channel
@@ -41,7 +41,7 @@ export default {
   // GitHub Pages project subfolder). When set to a full origin such as
   // "https://coinandcortex.example", the build adds canonical + absolute OG
   // URLs and generates sitemap.xml. Do NOT include a trailing slash.
-  SITE_URL: "",
+  SITE_URL: "https://coinandcortex.com",
 
   // ---------------------------------------------------------------------------
   // Seller details (used in Impressum / Privacy / Terms)

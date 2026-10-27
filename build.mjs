@@ -450,10 +450,13 @@ async function build() {
     if (existsSync(path.join(SRC, f))) await copyFile(path.join(SRC, f), path.join(DIST, f));
   }
 
+  // --- CNAME for GitHub Pages custom domain ---
+  if (SITE_URL) await writeOut("CNAME", new URL(SITE_URL).host + "\n");
+
   // --- robots.txt (always) ---
   const robots = SITE_URL
-    ? `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
-    : `User-agent: *\nAllow: /\n`;
+    ? `User-agent: *\nAllow: /\nDisallow: /dl/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
+    : `User-agent: *\nAllow: /\nDisallow: /dl/\n`;
   await writeOut("robots.txt", robots);
 
   // --- sitemap.xml (only when SITE_URL is set) ---
