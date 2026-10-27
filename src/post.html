@@ -1,8 +1,11 @@
-    <article class="wrap prose">
-      <p class="back-link"><a href="{{BASE}}blog/">← Back to the blog</a></p>
-      <h1>{{POST_TITLE}}</h1>
-      {{POST_DATE}}
+    <article class="wrap prose post">
+      {{BREADCRUMBS}}
+      <header class="post-head">
+        <h1>{{POST_TITLE}}</h1>
+        {{POST_BYLINE}}
+      </header>
+      {{POST_HERO}}
       {{POST_BODY}}
-      <hr>
-      <p class="disclaimer-note">Education and entertainment only. Not financial, investment, tax or legal advice.</p>
+      <p class="disclaimer-note">Education only, not financial, investment, tax or legal advice. Found an error? Email {{CONTACT_EMAIL}} and we'll fix it.</p>
+      {{RELATED}}
     </article>

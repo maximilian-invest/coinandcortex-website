@@ -42,6 +42,7 @@ const PAGES = [
   { file: "shop.html",           out: "shop/index.html" },
   { file: "free-checklist.html", out: "free-checklist/index.html" },
   { file: "blog.html",           out: "blog/index.html" },
+  { file: "about.html",          out: "about/index.html" },
   { file: "impressum.html",      out: "impressum/index.html" },
   { file: "privacy.html",        out: "privacy/index.html" },
   { file: "terms.html",          out: "terms/index.html" },
@@ -108,39 +109,54 @@ function escAttr(s) {
 
 // -----------------------------------------------------------------------------
 // Small Markdown -> HTML converter (built-in, intentionally minimal).
-// Supports: headings, paragraphs, bold/italic, inline code, links, images,
-// unordered/ordered lists, blockquotes, fenced/indented code, and <hr>.
+// Supports: headings (h2/h3 get stable ids), paragraphs, bold/italic, inline
+// code, links, images, lists, blockquotes, fenced code, GFM tables, <hr>, and
+// one-line tokens: [[toc]], [[video:ID|Title]], [[cta:kit]], [[cta:checklist]].
 // -----------------------------------------------------------------------------
+function slugify(t) {
+  return String(t)
+    .toLowerCase()
+    .replace(/<[^>]+>/g, "")
+    .replace(/&[a-z]+;/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 70);
+}
+
+function stripTags(html) {
+  return String(html).replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim();
+}
+
 function inlineMd(text) {
-  // Escape first, then re-introduce the small set of inline constructs.
   let s = esc(text);
-  // inline code (protect contents from other rules)
   const codes = [];
   s = s.replace(/`([^`]+)`/g, (_, c) => {
     codes.push(c);
-    return `${codes.length - 1}`;
+    return `\u0000${codes.length - 1}\u0000`;
   });
-  // images ![alt](src)
-  s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, alt, src) =>
-    `<img src="${src}" alt="${alt}" loading="lazy">`
-  );
-  // links [text](url)
+  s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, alt, src) => `<img src="${src}" alt="${alt}" loading="lazy" decoding="async">`);
   s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, txt, url) => {
     const ext = /^https?:\/\//.test(url);
     const rel = ext ? ' rel="noopener"' : "";
     return `<a href="${url}"${rel}>${txt}</a>`;
   });
-  // bold then italic
   s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  s = s.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-  // restore inline code
-  s = s.replace(/(\d+)/g, (_, i) => `<code>${esc(codes[Number(i)])}</code>`);
+  s = s.replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\w)/g, "$1<em>$2</em>");
+  s = s.replace(/\u0000(\d+)\u0000/g, (_, i) => `<code>${esc(codes[Number(i)])}</code>`);
   return s;
 }
 
-function markdownToHtml(md) {
+function splitRow(line) {
+  return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => c.trim());
+}
+
+function markdownToHtml(md, ctx = {}) {
   const lines = md.replace(/\r\n/g, "\n").split("\n");
   const out = [];
+  const headings = [];
+  const usedIds = new Set();
   let i = 0;
   let para = [];
 
@@ -154,93 +170,173 @@ function markdownToHtml(md) {
   while (i < lines.length) {
     const line = lines[i];
 
-    // fenced code block
     if (/^```/.test(line)) {
       flushPara();
       const buf = [];
       i++;
       while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
-      i++; // skip closing fence
+      i++;
       out.push(`<pre><code>${esc(buf.join("\n"))}</code></pre>`);
       continue;
     }
+    if (/^\s*$/.test(line)) { flushPara(); i++; continue; }
 
-    // blank line
-    if (/^\s*$/.test(line)) {
+    // one-line tokens
+    const tok = line.trim().match(/^\[\[(toc|video:[^\]|]+(?:\|[^\]]*)?|cta:[a-z]+)\]\]$/);
+    if (tok) {
       flushPara();
+      const t = tok[1];
+      if (t === "toc") out.push("\u0000TOC\u0000");
+      else if (t.startsWith("video:")) {
+        const [id, title] = t.slice(6).split("|");
+        out.push(videoEmbed(id.trim(), (title || "").trim()));
+        if (ctx.hasVideo) ctx.hasVideo.v = true;
+      } else if (t.startsWith("cta:")) out.push(ctaBox(t.slice(4)));
       i++;
       continue;
     }
 
-    // hr
-    if (/^\s*(---|\*\*\*|___)\s*$/.test(line)) {
-      flushPara();
-      out.push("<hr>");
-      i++;
-      continue;
-    }
+    if (/^\s*(---|\*\*\*|___)\s*$/.test(line)) { flushPara(); out.push("<hr>"); i++; continue; }
 
-    // heading
     const h = line.match(/^(#{1,6})\s+(.*)$/);
     if (h) {
       flushPara();
-      const level = h[1].length;
-      out.push(`<h${level}>${inlineMd(h[2].trim())}</h${level}>`);
+      // Markdown "#" inside a post body is demoted: the page title is the only h1.
+      const level = Math.max(2, h[1].length);
+      const inner = inlineMd(h[2].trim());
+      let id = slugify(h[2]);
+      let n = 2;
+      while (usedIds.has(id)) id = `${slugify(h[2])}-${n++}`;
+      usedIds.add(id);
+      if (level === 2) headings.push({ id, text: stripTags(inner) });
+      out.push(`<h${level} id="${id}">${inner}</h${level}>`);
       i++;
       continue;
     }
 
-    // blockquote (consecutive > lines)
-    if (/^\s*>\s?/.test(line)) {
+    // GFM table: header row, separator row, body rows
+    if (/^\s*\|.*\|\s*$/.test(line) && i + 1 < lines.length && /^\s*\|?\s*:?-{2,}/.test(lines[i + 1])) {
       flushPara();
-      const buf = [];
-      while (i < lines.length && /^\s*>\s?/.test(lines[i])) {
-        buf.push(lines[i].replace(/^\s*>\s?/, ""));
-        i++;
-      }
-      out.push(`<blockquote>${inlineMd(buf.join(" "))}</blockquote>`);
+      const head = splitRow(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && /^\s*\|.*\|\s*$/.test(lines[i])) rows.push(splitRow(lines[i++]));
+      out.push(
+        `<div class="table-wrap" tabindex="0" role="region" aria-label="Table"><table><thead><tr>${head.map((c) => `<th scope="col">${inlineMd(c)}</th>`).join("")}</tr></thead><tbody>` +
+          rows.map((r) => `<tr>${r.map((c) => `<td>${inlineMd(c)}</td>`).join("")}</tr>`).join("") +
+          `</tbody></table></div>`
+      );
       continue;
     }
 
-    // unordered list
+    if (/^\s*>\s?/.test(line)) {
+      flushPara();
+      const buf = [];
+      while (i < lines.length && /^\s*>\s?/.test(lines[i])) { buf.push(lines[i].replace(/^\s*>\s?/, "")); i++; }
+      // paragraphs inside the quote are separated by empty "> " lines
+      const paras = buf.join("\n").split(/\n\s*\n/).map((p) => `<p>${inlineMd(p.replace(/\n/g, " "))}</p>`);
+      out.push(`<blockquote>${paras.join("")}</blockquote>`);
+      continue;
+    }
+
     if (/^\s*[-*+]\s+/.test(line)) {
       flushPara();
       const items = [];
-      while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) {
-        items.push(lines[i].replace(/^\s*[-*+]\s+/, ""));
-        i++;
-      }
+      while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) { items.push(lines[i].replace(/^\s*[-*+]\s+/, "")); i++; }
       out.push(`<ul>${items.map((t) => `<li>${inlineMd(t)}</li>`).join("")}</ul>`);
       continue;
     }
 
-    // ordered list
     if (/^\s*\d+\.\s+/.test(line)) {
       flushPara();
       const items = [];
-      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
-        items.push(lines[i].replace(/^\s*\d+\.\s+/, ""));
-        i++;
-      }
+      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) { items.push(lines[i].replace(/^\s*\d+\.\s+/, "")); i++; }
       out.push(`<ol>${items.map((t) => `<li>${inlineMd(t)}</li>`).join("")}</ol>`);
       continue;
     }
 
-    // paragraph text
     para.push(line.trim());
     i++;
   }
   flushPara();
-  return out.join("\n");
+
+  let html = out.join("\n");
+  const tocItems = headings.filter((x) => !/^(sources|references)$/i.test(x.text));
+  const toc = tocItems.length
+    ? `<nav class="toc card" aria-label="On this page"><p class="toc-title">On this page</p><ol>${tocItems.map((x) => `<li><a href="#${x.id}">${esc(x.text)}</a></li>`).join("")}</ol></nav>`
+    : "";
+  html = html.replace("\u0000TOC\u0000", toc);
+  return { html, headings };
+}
+
+// FAQ extraction for FAQPage JSON-LD: "## Frequently asked questions" section,
+// each "### Question?" followed by answer paragraphs, until the next "## ".
+function extractFaq(md) {
+  const lines = md.split("\n");
+  const start = lines.findIndex((l) => /^##\s+(frequently asked questions|faq)/i.test(l));
+  if (start < 0) return [];
+  const items = [];
+  let cur = null;
+  for (let i = start + 1; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^##\s/.test(l)) break;
+    const q = l.match(/^###\s+(.*)$/);
+    if (q) { cur = { q: stripTags(inlineMd(q[1])), a: [] }; items.push(cur); continue; }
+    if (cur && l.trim()) cur.a.push(l.trim().replace(/^[-*]\s+|^\d+\.\s+/, ""));
+  }
+  return items.filter((x) => x.a.length).map((x) => ({ q: x.q, a: stripTags(inlineMd(x.a.join(" "))) }));
 }
 
 // -----------------------------------------------------------------------------
 // Computed snippets
 // -----------------------------------------------------------------------------
+function videoById(id) {
+  return config.VIDEOS.find((v) => v.url.includes(id));
+}
+
+// Click-to-play facade: no request to YouTube until the visitor clicks.
+function videoEmbed(id, title) {
+  const v = videoById(id);
+  const t = title || (v ? v.title : "Watch on YouTube");
+  const thumb = v ? `{{BASE}}assets/img/${v.thumb}.webp` : "";
+  return `<figure class="video-embed">
+  <a class="yt-facade" href="https://www.youtube.com/watch?v=${escAttr(id)}" data-yt="${escAttr(id)}" rel="noopener">
+    ${thumb ? `<img src="${thumb}" width="640" height="360" loading="lazy" decoding="async" alt="">` : ""}
+    <span class="yt-play" aria-hidden="true"></span>
+    <span class="sr-only">Play video: </span><span class="yt-title">${esc(t)}</span>
+  </a>
+  <figcaption>Video: ${esc(t)}. The player loads from YouTube only when you press play.</figcaption>
+</figure>`;
+}
+
+function ctaBox(kind) {
+  if (kind === "kit") {
+    return `<aside class="cta card cta-kit" aria-label="The Switching Day Kit">
+  <img src="{{BASE}}assets/img/cover_1_hero-480.webp" width="480" height="480" loading="lazy" decoding="async" alt="Cover of the Switching Day Kit">
+  <div><p class="cta-title">Want it done in one calm hour a year?</p>
+  <p>The <strong>Switching Day Kit</strong> gives you the plan, a contracts tracker, calendar reminders and five ready-to-use call &amp; chat scripts. Instant download, {{KIT_PRICE}}.</p>
+  <p><a class="btn btn-primary" href="{{BASE}}shop/">See what's inside</a></p></div>
+</aside>`;
+  }
+  if (kind === "checklist") {
+    return `<aside class="cta card cta-checklist" aria-label="Free checklist">
+  <img src="{{BASE}}assets/img/checklist_preview-480.webp" width="480" height="338" loading="lazy" decoding="async" alt="Preview of the Fair Price Protocol checklist">
+  <div><p class="cta-title">Free: the Fair Price Protocol checklist</p>
+  <p>Six moves to check you're paying a fair price, on two printable pages. No sign-up, no email.</p>
+  <p><a class="btn btn-secondary" href="{{BASE}}free-checklist/">Get the free checklist</a></p></div>
+</aside>`;
+  }
+  return "";
+}
+
+const VIDEO_SCRIPT = `<script>
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[data-yt]");if(!a||e.ctrlKey||e.metaKey||e.shiftKey)return;e.preventDefault();var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+a.getAttribute("data-yt")+"?autoplay=1&rel=0";f.title=a.querySelector(".yt-title").textContent;f.allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";f.allowFullscreen=true;f.width=640;f.height=360;a.replaceWith(f);});
+</script>`;
+
 function videoCards() {
   return config.VIDEOS.map(
     (v) => `        <a class="video-card card" href="${escAttr(v.url)}" rel="noopener">
-          <img src="{{BASE}}assets/img/${v.thumb}.webp" width="640" height="360" loading="lazy" alt="Thumbnail for the video: ${escAttr(v.title)}">
+          <img src="{{BASE}}assets/img/${v.thumb}.webp" width="640" height="360" loading="lazy" decoding="async" alt="Thumbnail for the video: ${escAttr(v.title)}">
           <span class="video-title">${esc(v.title)}</span>
         </a>`
   ).join("\n");
@@ -260,6 +356,17 @@ function buyButton() {
 }
 
 // -----------------------------------------------------------------------------
+// Blog hubs (topic clusters). Order = display order on the blog index.
+// -----------------------------------------------------------------------------
+const HUBS = [
+  { id: "fair-prices", name: "Fair prices", blurb: "Personalized and dynamic pricing, the loyalty penalty, and simple habits to stop overpaying." },
+  { id: "money-mind", name: "Money mind", blurb: "Why clever people still make money mistakes, and the systems that beat willpower." },
+  { id: "lifestyle-creep", name: "Spending & lifestyle creep", blurb: "Why earning more doesn't automatically make you richer, and how to keep more of each raise." },
+  { id: "work-time-money", name: "Work, time & money", blurb: "Where the 40-hour week came from, and how to think about money as hours of your life." },
+];
+const hubById = (id) => HUBS.find((h) => h.id === id);
+
+// -----------------------------------------------------------------------------
 // Blog loading
 // -----------------------------------------------------------------------------
 async function loadBlogPosts() {
@@ -271,77 +378,187 @@ async function loadBlogPosts() {
     const raw = await readFile(path.join(dir, f), "utf8");
     const { meta, body } = parseMdFrontMatter(raw);
     const slug = f.replace(/\.md$/, "");
+    const hasVideo = { v: false };
+    const { html } = markdownToHtml(body, { hasVideo });
+    const words = stripTags(html).split(/\s+/).filter(Boolean).length;
+    const image = (meta.image || "").replace(/^\//, "");
     posts.push({
       slug,
       title: meta.title || slug,
+      seoTitle: meta.seo_title || meta.title || slug,
       description: meta.description || "",
+      keyword: meta.keyword || "",
+      hub: meta.hub || "",
+      pillar: meta.pillar === "true",
+      image,
+      imageAlt: meta.image_alt || "",
       date: meta.date || "",
-      html: markdownToHtml(body),
+      updated: meta.updated || meta.date || "",
+      html,
+      hasVideo: hasVideo.v,
+      faq: extractFaq(body),
+      words,
+      minutes: Math.max(1, Math.round(words / 230)),
     });
   }
-  // Keep a stable, deterministic order (newest-first by date when present,
-  // otherwise alphabetical by slug). No years are relied upon.
-  posts.sort((a, b) => (b.date || "").localeCompare(a.date || "") || a.slug.localeCompare(b.slug));
+  // Pillars first inside each hub, then newest (by date), then slug.
+  posts.sort((a, b) => (b.pillar - a.pillar) || (b.date || "").localeCompare(a.date || "") || a.slug.localeCompare(b.slug));
   return posts;
 }
 
+// Responsive <img> for a blog hero (variants: -400, -800, full 1200).
+function heroImg(post, { eager = false, sizes = "(min-width: 48rem) 46rem, 100vw" } = {}) {
+  if (!post.image) return "";
+  const base = post.image.replace(/\.webp$/, "");
+  const attrs = eager ? `fetchpriority="high" decoding="async"` : `loading="lazy" decoding="async"`;
+  return `<img src="{{BASE}}${base}-800.webp" srcset="{{BASE}}${base}-400.webp 400w, {{BASE}}${base}-800.webp 800w, {{BASE}}${post.image} 1200w" sizes="${sizes}" width="1200" height="675" ${attrs} alt="${escAttr(post.imageAlt)}">`;
+}
+
+function postCard(p, headingLevel = 3) {
+  const h = `h${headingLevel}`;
+  return `<li class="post-card card">
+        <a class="post-card-img" href="{{BASE}}blog/${p.slug}/" tabindex="-1" aria-hidden="true">${heroImg(p, { sizes: "(min-width: 42rem) 22rem, 100vw" })}</a>
+        <div class="post-card-body">
+          ${p.pillar ? `<p class="badge">Start here</p>` : ""}
+          <${h}><a href="{{BASE}}blog/${p.slug}/">${esc(p.title)}</a></${h}>
+          <p>${esc(p.description)}</p>
+          <p class="meta">${p.minutes} min read</p>
+        </div>
+      </li>`;
+}
+
 function blogListHtml(posts) {
-  if (!posts.length) {
-    return `<p>No posts yet — check back soon.</p>`;
+  if (!posts.length) return `<p>No posts yet — check back soon.</p>`;
+  const parts = [];
+  for (const hub of HUBS) {
+    const inHub = posts.filter((p) => p.hub === hub.id);
+    if (!inHub.length) continue;
+    parts.push(`<section class="hub" id="${hub.id}" aria-labelledby="hub-${hub.id}">
+      <h2 id="hub-${hub.id}">${esc(hub.name)}</h2>
+      <p>${esc(hub.blurb)}</p>
+      <ul class="post-grid">
+      ${inHub.map((p) => postCard(p, 3)).join("\n      ")}
+      </ul>
+    </section>`);
   }
-  return posts
-    .map(
-      (p) => `      <li class="post-item card">
-        <h2><a href="{{BASE}}blog/${p.slug}/">${esc(p.title)}</a></h2>
-        <p>${esc(p.description)}</p>
-        <p><a href="{{BASE}}blog/${p.slug}/">Read the article →</a></p>
-      </li>`
-    )
-    .join("\n");
+  const rest = posts.filter((p) => !hubById(p.hub));
+  if (rest.length) {
+    parts.push(`<section class="hub" id="more" aria-labelledby="hub-more">
+      <h2 id="hub-more">More articles</h2>
+      <ul class="post-grid">
+      ${rest.map((p) => postCard(p, 3)).join("\n      ")}
+      </ul>
+    </section>`);
+  }
+  return parts.join("\n");
 }
 
 function blogTeaserHtml(posts) {
   if (!posts.length) return `<p>Articles are on the way.</p>`;
-  const top = posts.slice(0, 2);
-  return top
-    .map(
-      (p) => `        <li class="card">
-          <h3><a href="{{BASE}}blog/${p.slug}/">${esc(p.title)}</a></h3>
-          <p>${esc(p.description)}</p>
-        </li>`
-    )
-    .join("\n");
+  const pillars = posts.filter((p) => p.pillar);
+  const top = (pillars.length >= 2 ? pillars : posts).slice(0, 4);
+  return top.map((p) => postCard(p, 3)).join("\n");
+}
+
+function relatedHtml(post, posts) {
+  const same = posts.filter((p) => p.slug !== post.slug && p.hub === post.hub);
+  const pillar = posts.find((p) => p.pillar && p.hub === post.hub && p.slug !== post.slug);
+  const others = posts.filter((p) => p.slug !== post.slug && p.hub !== post.hub && p.pillar);
+  const list = [...new Set([...(pillar ? [pillar] : []), ...same, ...others])].slice(0, 4);
+  if (!list.length) return "";
+  return `<section class="related" aria-labelledby="related-h">
+        <h2 id="related-h">Keep reading</h2>
+        <ul class="post-grid">
+        ${list.map((p) => postCard(p, 3)).join("\n        ")}
+        </ul>
+      </section>`;
 }
 
 // -----------------------------------------------------------------------------
-// Head meta (canonical + OG/Twitter). OG image falls back to a relative URL
-// when SITE_URL is empty so the site stays domain-agnostic.
+// Structured data (JSON-LD)
 // -----------------------------------------------------------------------------
-function headExtra({ title, description, out, base, rootRelative }) {
+const ORG_ID = `${SITE_URL}/#organization`;
+const SITE_ID = `${SITE_URL}/#website`;
+function orgLd() {
+  return {
+    "@type": "Organization",
+    "@id": ORG_ID,
+    name: SITE_NAME,
+    url: `${SITE_URL}/`,
+    logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo.webp`, width: 256, height: 256 },
+    description: "Coin & Cortex explains the psychology of money and behavioral economics with doodle videos and practical, sourced articles.",
+    sameAs: [config.YOUTUBE_CHANNEL],
+    founder: { "@type": "Person", name: config.SELLER_NAME },
+    email: config.CONTACT_EMAIL,
+  };
+}
+function websiteLd() {
+  return { "@type": "WebSite", "@id": SITE_ID, url: `${SITE_URL}/`, name: SITE_NAME, publisher: { "@id": ORG_ID }, inLanguage: "en" };
+}
+function breadcrumbLd(items) {
+  return {
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, item: it.url })),
+  };
+}
+function faqLd(faq) {
+  return {
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  };
+}
+function ldScript(graph) {
+  const json = JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c");
+  return `  <script type="application/ld+json">${json}</script>`;
+}
+function priceNumber() {
+  const m = String(config.KIT_PRICE).replace(",", ".").match(/\d+(\.\d+)?/);
+  return m ? Number(m[0]).toFixed(2) : "";
+}
+function priceCurrency() {
+  const s = String(config.KIT_PRICE);
+  if (/€|eur/i.test(s)) return "EUR";
+  if (/\$|usd/i.test(s)) return "USD";
+  if (/£|gbp/i.test(s)) return "GBP";
+  return "EUR";
+}
+
+// -----------------------------------------------------------------------------
+// Head meta (canonical + OG/Twitter).
+// -----------------------------------------------------------------------------
+function pageUrl(out) {
+  const folder = out.replace(/index\.html$/, "").replace(/^(.*)\/$/, "$1");
+  return folder ? `${SITE_URL}/${folder}/` : `${SITE_URL}/`;
+}
+
+function headExtra({ title, description, out, base, rootRelative, ogType = "website", ogImage, ogImageAlt, extra = [] }) {
   const parts = [];
-  const ogImage = SITE_URL ? `${SITE_URL}/assets/img/og_image.jpg` : `${base}assets/img/og_image.jpg`;
+  const img = ogImage || { url: `${SITE_URL}/assets/img/og_default.jpg`, w: 1200, h: 630, alt: "Coin & Cortex: why your brain is bad with money" };
   let url = "";
   if (SITE_URL && !rootRelative) {
-    const folder = out.replace(/index\.html$/, "").replace(/^(.*)\/$/, "$1");
-    url = folder ? `${SITE_URL}/${folder}/` : `${SITE_URL}/`;
+    url = pageUrl(out);
     parts.push(`  <link rel="canonical" href="${escAttr(url)}">`);
   }
-  parts.push(`  <meta property="og:type" content="website">`);
+  parts.push(`  <meta property="og:type" content="${ogType}">`);
   parts.push(`  <meta property="og:site_name" content="${escAttr(SITE_NAME)}">`);
+  parts.push(`  <meta property="og:locale" content="en_US">`);
   parts.push(`  <meta property="og:title" content="${escAttr(title)}">`);
   parts.push(`  <meta property="og:description" content="${escAttr(description)}">`);
-  parts.push(`  <meta property="og:image" content="${escAttr(ogImage)}">`);
+  parts.push(`  <meta property="og:image" content="${escAttr(img.url)}">`);
+  parts.push(`  <meta property="og:image:width" content="${img.w}">`);
+  parts.push(`  <meta property="og:image:height" content="${img.h}">`);
+  parts.push(`  <meta property="og:image:alt" content="${escAttr(ogImageAlt || img.alt)}">`);
   if (url) parts.push(`  <meta property="og:url" content="${escAttr(url)}">`);
   parts.push(`  <meta name="twitter:card" content="summary_large_image">`);
   parts.push(`  <meta name="twitter:title" content="${escAttr(title)}">`);
   parts.push(`  <meta name="twitter:description" content="${escAttr(description)}">`);
-  parts.push(`  <meta name="twitter:image" content="${escAttr(ogImage)}">`);
-  return parts.join("\n");
+  parts.push(`  <meta name="twitter:image" content="${escAttr(img.url)}">`);
+  parts.push(`  <meta name="twitter:image:alt" content="${escAttr(ogImageAlt || img.alt)}">`);
+  return parts.concat(extra).join("\n");
 }
 
 // -----------------------------------------------------------------------------
-// Final substitution pass (config + base + computed one-liners).
-// Runs on the fully assembled document so snippets can carry placeholders too.
+// Final substitution pass
 // -----------------------------------------------------------------------------
 function substitute(html, base) {
   const map = {
@@ -360,7 +577,7 @@ function substitute(html, base) {
     if (Object.prototype.hasOwnProperty.call(map, key)) {
       return map[key] === undefined || map[key] === null ? "" : String(map[key]);
     }
-    return full; // leave unknown placeholders so the no-{{ check can catch them
+    return full;
   });
 }
 
@@ -383,6 +600,24 @@ async function copyDir(from, to) {
   }
 }
 
+// Minify the stylesheet so it can be inlined (removes a render-blocking request).
+function minifyCss(css) {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/\s+/g, " ")
+    .replace(/\s*([{}:;,>])\s*/g, "$1")
+    .replace(/;}/g, "}")
+    .trim();
+}
+
+function rfc822(dateStr) {
+  const d = new Date(`${dateStr}T08:00:00Z`);
+  return isNaN(d) ? "" : d.toUTCString();
+}
+function isoDate(dateStr) {
+  return dateStr ? `${dateStr}T08:00:00+00:00` : "";
+}
+
 // -----------------------------------------------------------------------------
 // Build
 // -----------------------------------------------------------------------------
@@ -391,6 +626,7 @@ async function build() {
   await mkdir(DIST, { recursive: true });
 
   const layout = await readFile(path.join(SRC, "layout.html"), "utf8");
+  const css = minifyCss(await readFile(path.join(SRC, "assets/css/style.css"), "utf8"));
   const posts = await loadBlogPosts();
 
   const computed = {
@@ -400,12 +636,17 @@ async function build() {
     "{{BUY_BUTTON}}": buyButton(),
   };
 
-  // Assemble one page: fill layout, computed snippets, then substitute.
-  function assemble({ title, description, body, out, base, rootRelative }) {
+  function assemble({ title, description, body, out, base, rootRelative, robots, ogType, ogImage, ogImageAlt, ld, extraHead = [], script = "" }) {
+    const extra = [...extraHead];
+    if (ld && ld.length && SITE_URL) extra.push(ldScript(ld));
+    const inlineCss = css.replace(/url\(["']?\.\.\/fonts\//g, 'url("{{BASE}}assets/fonts/').replace(/(woff2)["']?\)/g, '$1")');
     let html = layout
       .replace(/\{\{TITLE\}\}/g, esc(title))
       .replace(/\{\{DESCRIPTION\}\}/g, esc(description))
-      .replace(/\{\{HEAD_EXTRA\}\}/g, headExtra({ title, description, out, base, rootRelative }))
+      .replace(/\{\{ROBOTS\}\}/g, robots || "index, follow, max-image-preview:large, max-snippet:-1")
+      .replace(/\{\{INLINE_CSS\}\}/g, inlineCss)
+      .replace(/\{\{HEAD_EXTRA\}\}/g, headExtra({ title, description, out, base, rootRelative, ogType, ogImage, ogImageAlt, extra }))
+      .replace(/\{\{BODY_SCRIPT\}\}/g, script)
       .replace(/\{\{CONTENT\}\}/g, body);
     for (const [k, v] of Object.entries(computed)) html = html.split(k).join(v);
     return substitute(html, base);
@@ -418,7 +659,53 @@ async function build() {
     const base = baseFor(p.out, p.rootRelative);
     const title = meta.title || SITE_NAME;
     const description = meta.description || "";
-    const html = assemble({ title, description, body, out: p.out, base, rootRelative: p.rootRelative });
+    const url = SITE_URL && !p.rootRelative ? pageUrl(p.out) : "";
+    const crumbName = meta.crumb || title.replace(/\s+[—-]\s+Coin & Cortex$/, "");
+    const ld = [];
+    if (p.out === "index.html") {
+      ld.push(orgLd(), websiteLd());
+      ld.push({ "@type": "WebPage", "@id": `${url}#webpage`, url, name: title, description, isPartOf: { "@id": SITE_ID }, about: { "@id": ORG_ID }, inLanguage: "en" });
+    } else if (!p.rootRelative) {
+      ld.push(breadcrumbLd([{ name: "Home", url: `${SITE_URL}/` }, { name: crumbName, url }]));
+      const type = p.out === "about/index.html" ? "AboutPage" : p.out === "blog/index.html" ? "CollectionPage" : "WebPage";
+      const page = { "@type": type, "@id": `${url}#webpage`, url, name: title, description, isPartOf: { "@id": SITE_ID }, inLanguage: "en" };
+      if (type === "AboutPage") { page.about = { "@id": ORG_ID }; ld.push(orgLd()); }
+      if (type === "CollectionPage") {
+        page.mainEntity = { "@type": "ItemList", itemListElement: posts.map((x, i) => ({ "@type": "ListItem", position: i + 1, url: `${SITE_URL}/blog/${x.slug}/`, name: x.title })) };
+      }
+      ld.push(page);
+    }
+    if (p.out === "shop/index.html") {
+      ld.push({
+        "@type": "Product",
+        "@id": `${url}#product`,
+        name: "The Switching Day Kit",
+        description,
+        image: ["cover_1_hero", "cover_2_whats_inside", "cover_3_tracker_scripts", "kit_preview"].map((n) => `${SITE_URL}/assets/img/${n}.webp`),
+        brand: { "@type": "Brand", name: SITE_NAME },
+        category: "Digital download",
+        offers: {
+          "@type": "Offer",
+          url,
+          price: priceNumber(),
+          priceCurrency: priceCurrency(),
+          availability: "https://schema.org/InStock",
+          seller: { "@id": ORG_ID },
+        },
+      });
+      // Real FAQ on the page (<details> blocks) -> FAQPage
+      const faq = [...body.matchAll(/<summary>([\s\S]*?)<\/summary>\s*<p>([\s\S]*?)<\/p>/g)].map((m) => ({
+        q: stripTags(m[1]),
+        a: stripTags(substitute(m[2], base)),
+      }));
+      if (faq.length) ld.push(faqLd(faq));
+    }
+    const html = assemble({
+      title, description, body, out: p.out, base, rootRelative: p.rootRelative,
+      robots: p.rootRelative ? "noindex, follow" : undefined,
+      ld,
+      extraHead: p.out === "blog/index.html" || p.out === "index.html" ? [`  <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} blog" href="${SITE_URL}/blog/feed.xml">`] : [],
+    });
     await writeOut(p.out, html);
   }
 
@@ -427,18 +714,67 @@ async function build() {
   for (const post of posts) {
     const out = `blog/${post.slug}/index.html`;
     const base = baseFor(out, false);
-    const dateLine = post.date ? `<p class="post-date">${esc(post.date)}</p>` : "";
+    const url = pageUrl(out);
+    const hub = hubById(post.hub);
+    const crumbs = `<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{{BASE}}">Home</a></li><li><a href="{{BASE}}blog/">Blog</a></li>${hub ? `<li><a href="{{BASE}}blog/#${hub.id}">${esc(hub.name)}</a></li>` : ""}<li aria-current="page">${esc(post.title)}</li></ol></nav>`;
+    const byline = `<p class="byline">By <a href="{{BASE}}about/">the Coin &amp; Cortex team</a> · ${post.minutes} min read · <a href="{{BASE}}about/#editorial-standards">How we research</a></p>`;
+    const hero = post.image ? `<figure class="post-hero">${heroImg(post, { eager: true })}</figure>` : "";
     const body = postLayout
+      .replace(/\{\{BREADCRUMBS\}\}/g, crumbs)
       .replace(/\{\{POST_TITLE\}\}/g, esc(post.title))
-      .replace(/\{\{POST_DATE\}\}/g, dateLine)
-      .replace(/\{\{POST_BODY\}\}/g, post.html);
+      .replace(/\{\{POST_BYLINE\}\}/g, byline)
+      .replace(/\{\{POST_HERO\}\}/g, hero)
+      .replace(/\{\{POST_BODY\}\}/g, post.html)
+      .replace(/\{\{RELATED\}\}/g, relatedHtml(post, posts))
+      .replace(/\{\{POST_DATE\}\}/g, "");
+    const imgUrl = post.image ? `${SITE_URL}/${post.image}` : `${SITE_URL}/assets/img/og_default.jpg`;
+    const ogUrl = post.image ? `${SITE_URL}/${post.image.replace(/\.webp$/, "-og.jpg")}` : `${SITE_URL}/assets/img/og_default.jpg`;
+    const ld = [
+      {
+        "@type": "BlogPosting",
+        "@id": `${url}#article`,
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        headline: post.title.length > 110 ? post.seoTitle : post.title,
+        description: post.description,
+        image: [imgUrl, ogUrl],
+        author: { "@type": "Organization", name: SITE_NAME, url: `${SITE_URL}/about/` },
+        publisher: { "@id": ORG_ID },
+        inLanguage: "en",
+        wordCount: post.words,
+        ...(post.keyword ? { keywords: post.keyword } : {}),
+        ...(hub ? { articleSection: hub.name } : {}),
+        ...(post.date ? { datePublished: isoDate(post.date), dateModified: isoDate(post.updated) } : {}),
+        isPartOf: { "@id": SITE_ID },
+      },
+      orgLd(),
+      breadcrumbLd([
+        { name: "Home", url: `${SITE_URL}/` },
+        { name: "Blog", url: `${SITE_URL}/blog/` },
+        ...(hub ? [{ name: hub.name, url: `${SITE_URL}/blog/#${hub.id}` }] : []),
+        { name: post.title, url },
+      ]),
+    ];
+    if (post.faq.length) ld.push(faqLd(post.faq));
+    const extraHead = [`  <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} blog" href="${SITE_URL}/blog/feed.xml">`];
+    if (post.date) {
+      extraHead.push(`  <meta property="article:published_time" content="${isoDate(post.date)}">`);
+      extraHead.push(`  <meta property="article:modified_time" content="${isoDate(post.updated)}">`);
+    }
+    if (hub) extraHead.push(`  <meta property="article:section" content="${escAttr(hub.name)}">`);
+    if (post.image) extraHead.push(`  <link rel="preload" as="image" href="{{BASE}}${post.image.replace(/\.webp$/, "-800.webp")}" imagesrcset="{{BASE}}${post.image.replace(/\.webp$/, "-400.webp")} 400w, {{BASE}}${post.image.replace(/\.webp$/, "-800.webp")} 800w, {{BASE}}${post.image} 1200w" imagesizes="(min-width: 48rem) 46rem, 100vw" fetchpriority="high">`);
     const html = assemble({
-      title: `${post.title} — ${SITE_NAME}`,
+      title: `${post.seoTitle} | ${SITE_NAME}`.length <= 65 ? `${post.seoTitle} | ${SITE_NAME}` : post.seoTitle,
       description: post.description,
       body,
       out,
       base,
       rootRelative: false,
+      ogType: "article",
+      ogImage: { url: ogUrl, w: 1200, h: 630, alt: post.imageAlt },
+      ogImageAlt: post.imageAlt,
+      ld,
+      extraHead,
+      script: post.hasVideo ? VIDEO_SCRIPT : "",
     });
     await writeOut(out, html);
   }
@@ -453,30 +789,44 @@ async function build() {
   // --- CNAME for GitHub Pages custom domain ---
   if (SITE_URL) await writeOut("CNAME", new URL(SITE_URL).host + "\n");
 
-  // --- robots.txt (always) ---
+  // --- robots.txt (always). /dl/ (paid download) must never be crawled. ---
   const robots = SITE_URL
     ? `User-agent: *\nAllow: /\nDisallow: /dl/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
     : `User-agent: *\nAllow: /\nDisallow: /dl/\n`;
   await writeOut("robots.txt", robots);
 
-  // --- sitemap.xml (only when SITE_URL is set) ---
+  // --- sitemap.xml + RSS (only when SITE_URL is set) ---
   if (SITE_URL) {
-    const urls = [];
+    const newest = posts.map((p) => p.updated).filter(Boolean).sort().pop() || "";
+    const entries = [];
     for (const p of PAGES) {
-      if (p.rootRelative) continue; // skip 404
-      const folder = p.out.replace(/index\.html$/, "").replace(/\/$/, "");
-      urls.push(folder ? `${SITE_URL}/${folder}/` : `${SITE_URL}/`);
+      if (p.rootRelative || p.noSitemap) continue;
+      const lastmod = p.out === "index.html" || p.out === "blog/index.html" ? newest : "";
+      entries.push({ loc: pageUrl(p.out), lastmod });
     }
-    for (const post of posts) urls.push(`${SITE_URL}/blog/${post.slug}/`);
+    for (const post of posts) entries.push({ loc: `${SITE_URL}/blog/${post.slug}/`, lastmod: post.updated, image: post.image ? `${SITE_URL}/${post.image}` : "" });
     const xml =
       `<?xml version="1.0" encoding="UTF-8"?>\n` +
-      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-      urls.map((u) => `  <url><loc>${esc(u)}</loc></url>`).join("\n") +
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n` +
+      entries
+        .map((e) => `  <url><loc>${esc(e.loc)}</loc>${e.lastmod ? `<lastmod>${esc(e.lastmod)}</lastmod>` : ""}${e.image ? `<image:image><image:loc>${esc(e.image)}</image:loc></image:image>` : ""}</url>`)
+        .join("\n") +
       `\n</urlset>\n`;
     await writeOut("sitemap.xml", xml);
+
+    const byDate = [...posts].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    const rss =
+      `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n<channel>\n` +
+      `  <title>${esc(SITE_NAME)} blog</title>\n  <link>${SITE_URL}/blog/</link>\n` +
+      `  <atom:link href="${SITE_URL}/blog/feed.xml" rel="self" type="application/rss+xml"/>\n` +
+      `  <description>Plain-English articles about money psychology, behavioral economics and fair prices.</description>\n  <language>en</language>\n` +
+      byDate
+        .map((p) => `  <item>\n    <title>${esc(p.title)}</title>\n    <link>${SITE_URL}/blog/${p.slug}/</link>\n    <guid isPermaLink="true">${SITE_URL}/blog/${p.slug}/</guid>\n    <description>${esc(p.description)}</description>\n${p.date ? `    <pubDate>${rfc822(p.date)}</pubDate>\n` : ""}  </item>`)
+        .join("\n") +
+      `\n</channel>\n</rss>\n`;
+    await writeOut("blog/feed.xml", rss);
   }
 
-  // --- guard: no unresolved placeholders left in HTML ---
   const leftovers = await findLeftovers(DIST);
   if (leftovers.length) {
     console.error("Unresolved {{...}} placeholders found:");

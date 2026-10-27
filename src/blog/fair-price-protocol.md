@@ -1,9 +1,18 @@
 ---
-title: Why two people can pay different prices for the same thing (and what to do about it)
+title: The Fair Price Protocol: a six-step habit to stop overpaying
+seo_title: The Fair Price Protocol: 6 Steps to Stop Overpaying
 description: A plain-English look at personalised and dynamic pricing, the loyalty penalty, and a simple six-step habit to get a fair price.
+keyword: how to get a fair price
+hub: fair-prices
+image: /assets/img/blog/fair-price-protocol.webp
+image_alt: Coin & Cortex doodle banner with Sam and a set of scales weighing coins
+date: 2026-10-27
+video: X7BITLlTogA
 ---
 
 Here's something that feels unfair because it is a little unfair: you and your neighbour can buy the very same thing and pay different amounts. Same product, same day, different price. It isn't magic and it isn't always a mistake. It's how a lot of modern pricing works.
+
+This article is the short, practical version. For the full explanation, read [why two people pay different prices for the same thing]({{BASE}}blog/personalized-pricing/) and [what the loyalty penalty is and how to beat it]({{BASE}}blog/loyalty-penalty/).
 
 ## Pricing isn't one fixed number anymore
 
@@ -36,6 +45,8 @@ That's it. No spreadsheets-of-doom, no confrontation, no gurus.
 
 The checklist works best when it's a routine, not a one-off. [Download the free Fair Price Protocol checklist]({{BASE}}free-checklist/) and keep it somewhere you'll see it. If you'd like the whole thing turned into one calm hour a year — a tracker, calendar reminders and ready-to-use call and chat scripts — that's exactly what the [Switching Day Kit]({{BASE}}shop/) is for.
 
-And if you'd rather watch than read, this started as a video: [Why You and Your Neighbor Now Pay Different Prices](https://youtu.be/X7BITLlTogA).
+And if you'd rather watch than read, this started as a video:
+
+[[video:X7BITLlTogA|Why You and Your Neighbor Now Pay Different Prices]]
 
 Fair isn't automatic. But it's usually just a few minutes away.

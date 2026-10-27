@@ -5,25 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{TITLE}}</title>
   <meta name="description" content="{{DESCRIPTION}}">
+  <meta name="robots" content="{{ROBOTS}}">
+  <meta name="theme-color" content="#F5EEDC">
+  <meta name="author" content="Coin &amp; Cortex">
+  <link rel="preload" href="{{BASE}}assets/fonts/PermanentMarker-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" href="{{BASE}}favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="{{BASE}}apple-touch-icon.png">
 {{HEAD_EXTRA}}
-  <link rel="stylesheet" href="{{BASE}}assets/css/style.css">
+  <style>{{INLINE_CSS}}</style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="logo" href="{{BASE}}">
-        <img src="{{BASE}}assets/img/logo.webp" width="40" height="40" alt="">
+        <img src="{{BASE}}assets/img/logo-80.webp" width="40" height="40" alt="">
         <span class="logo-text">Coin &amp; Cortex</span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <a href="{{BASE}}">Home</a>
-        <a href="{{BASE}}#videos">Videos</a>
-        <a href="{{BASE}}shop/">Shop</a>
-        <a href="{{BASE}}free-checklist/">Free checklist</a>
         <a href="{{BASE}}blog/">Blog</a>
+        <a href="{{BASE}}#videos">Videos</a>
+        <a href="{{BASE}}free-checklist/">Free checklist</a>
+        <a href="{{BASE}}shop/">Shop</a>
+        <a href="{{BASE}}about/">About</a>
       </nav>
     </div>
   </header>
@@ -34,16 +38,24 @@
 
   <footer class="site-footer">
     <div class="wrap">
-      <nav class="footer-nav" aria-label="Legal and contact">
+      <nav class="footer-nav" aria-label="Site">
+        <a href="{{BASE}}blog/">Blog</a>
+        <a href="{{BASE}}about/">About &amp; editorial standards</a>
+        <a href="{{BASE}}free-checklist/">Free checklist</a>
+        <a href="{{BASE}}shop/">Switching Day Kit</a>
+        <a href="{{YOUTUBE_CHANNEL}}" rel="noopener">YouTube</a>
+        <a href="{{BASE}}blog/feed.xml">RSS</a>
+      </nav>
+      <nav class="footer-nav footer-legal" aria-label="Legal">
         <a href="{{BASE}}impressum/">Impressum</a>
         <a href="{{BASE}}privacy/">Privacy</a>
         <a href="{{BASE}}terms/">Terms</a>
-        <a href="{{YOUTUBE_CHANNEL}}" rel="noopener">YouTube</a>
       </nav>
       <p class="footer-disclaimer">Education and entertainment only. Not financial, investment, tax or legal advice.</p>
       <p class="footer-ai">Narration uses an AI voice; illustrations are made with AI-assisted tools.</p>
       <p class="footer-copy">© Coin &amp; Cortex</p>
     </div>
   </footer>
+{{BODY_SCRIPT}}
 </body>
 </html>

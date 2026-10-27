@@ -6,8 +6,11 @@
 // Verifies, against dist/:
 //   * every internal href/src resolves to a real file
 //   * no leftover "{{...}}" placeholders
-//   * no year numbers like 20xx in page text (content must stay evergreen)
-//   * no external URLs outside the allow-list
+//   * no year numbers like 20xx in visible page text (content must stay evergreen;
+//     machine-readable dates in <script>/<meta>/<time datetime> are fine)
+//   * embedded resources (src=) only from allow-listed hosts; outbound
+//     <a href> links (article sources) may point to any https host
+//   * #fragment links point to an existing id
 // Prints "OK" and exits 0 on success; otherwise lists problems and exits 1.
 // =============================================================================
 
@@ -30,6 +33,8 @@ const ALLOWED_HOSTS = new Set([
   "www.stripe.com",
   "dsb.gv.at",
   "www.dsb.gv.at",
+  "www.youtube-nocookie.com",
+  "i.ytimg.com",
 ]);
 // When SITE_URL is set, the site's own canonical / OG / sitemap URLs are absolute.
 if (config.SITE_URL) {
@@ -54,10 +59,33 @@ async function walk(dir) {
 
 function extractLinks(html) {
   const links = [];
-  const re = /(?:href|src)\s*=\s*"([^"]*)"/gi;
+  const re = /\b(href|src|srcset)\s*=\s*"([^"]*)"/gi;
   let m;
-  while ((m = re.exec(html)) !== null) links.push(m[1]);
+  while ((m = re.exec(html)) !== null) {
+    if (m[1].toLowerCase() === "srcset") {
+      for (const part of m[2].split(",")) {
+        const u = part.trim().split(/\s+/)[0];
+        if (u) links.push({ attr: "src", url: u });
+      }
+    } else links.push({ attr: m[1].toLowerCase(), url: m[2] });
+  }
   return links;
+}
+
+function visibleText(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<head[\s\S]*?<\/head>/i, " ")
+    .replace(/<[^>]+>/g, " ");
+}
+
+function idsOf(html) {
+  const ids = new Set();
+  const re = /\bid\s*=\s*"([^"]+)"/g;
+  let m;
+  while ((m = re.exec(html)) !== null) ids.add(m[1]);
+  return ids;
 }
 
 function resolveTarget(link, fileDir) {
@@ -97,12 +125,18 @@ async function main() {
     if (ph) problems.push(`${rel}: leftover placeholder(s): ${[...new Set(ph)].join(", ")}`);
 
     // year numbers (evergreen check)
-    const years = html.match(/\b20\d\d\b/g);
+    const years = visibleText(html).match(/\b20\d\d\b/g);
     if (years) problems.push(`${rel}: contains year number(s): ${[...new Set(years)].join(", ")}`);
 
     // links
-    for (const link of extractLinks(html)) {
-      if (link.startsWith("#") || link.startsWith("data:")) continue;
+    const ownIds = idsOf(html);
+    for (const { attr, url: link } of extractLinks(html)) {
+      if (link.startsWith("data:")) continue;
+      if (link.startsWith("#")) {
+        if (link.length > 1 && !ownIds.has(decodeURIComponent(link.slice(1))))
+          problems.push(`${rel}: fragment without matching id -> ${link}`);
+        continue;
+      }
 
       if (isExternal(link)) {
         if (/^https?:/i.test(link)) {
@@ -113,8 +147,10 @@ async function main() {
             problems.push(`${rel}: malformed URL: ${link}`);
             continue;
           }
-          if (!ALLOWED_HOSTS.has(host)) {
-            problems.push(`${rel}: external URL not allowed: ${link}`);
+          if (attr === "src" && !ALLOWED_HOSTS.has(host)) {
+            problems.push(`${rel}: external resource not allowed: ${link}`);
+          } else if (/^http:/i.test(link) && !ALLOWED_HOSTS.has(host)) {
+            problems.push(`${rel}: insecure http:// link: ${link}`);
           }
         }
         continue; // mailto:/tel: etc. are fine
@@ -124,6 +160,10 @@ async function main() {
       if (target === null) continue;
       if (!existsSync(target)) {
         problems.push(`${rel}: broken link -> ${link}`);
+      } else if (link.includes("#") && target.endsWith(".html")) {
+        const frag = decodeURIComponent(link.split("#")[1] || "");
+        if (frag && !idsOf(await readFile(target, "utf8")).has(frag))
+          problems.push(`${rel}: fragment not found -> ${link}`);
       } else if ((await stat(target)).isDirectory()) {
         problems.push(`${rel}: link points to a directory -> ${link}`);
       }
