@@ -374,3 +374,99 @@ details[open] summary { margin-bottom: 0.5rem; }
 @media (prefers-reduced-motion: reduce) {
   .btn { transition: none; }
 }
+
+/* =========================================================================
+   === GEO additions ===
+   Styles for answer-first / generative-engine-optimization blocks. Appended
+   as one self-contained block; existing rules above are untouched. All text
+   keeps ink (#18161A) on light backgrounds (contrast well above 4.5:1).
+   ========================================================================= */
+
+/* Answer-first "Key takeaways" box, high in each deep article. Inherits
+   .card (paper fill, ink border, doodle shadow); gold accent on the left. */
+.key-takeaways {
+  margin: 1.4rem 0 1.6rem;
+  border-left: 8px solid var(--gold);
+}
+.key-takeaways .kt-title {
+  font-size: 1.3rem;
+  margin: 0 0 0.6rem;
+}
+.key-takeaways ul { margin: 0.5rem 0 0; padding-left: 1.3rem; }
+.key-takeaways li { margin-bottom: 0.4rem; }
+
+/* The single citable definition sentence. */
+.definition {
+  margin: 0 0 0.6rem;
+  background: #FFF8EA;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+}
+.definition strong { font-weight: 700; }
+
+/* Glossary box: the bullet list immediately after "## Key terms". */
+#key-terms + ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.6rem;
+}
+#key-terms + ul li {
+  margin: 0;
+  background: var(--wall);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+}
+#key-terms + ul li strong { font-weight: 700; }
+
+/* Research / dataset page: headline findings callout. */
+.key-findings {
+  background: var(--wall);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.1rem;
+  margin: 1.4rem 0;
+}
+.key-findings > :first-child { margin-top: 0; }
+.key-findings ul { padding-left: 1.3rem; }
+
+/* Research / dataset page: evidence table (used with or without .table-wrap). */
+.evidence-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.95rem;
+  background: var(--wall);
+}
+.evidence-table th,
+.evidence-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid #B9AE92;
+}
+.evidence-table th { background: var(--ink); color: #fff; font-weight: 700; }
+.evidence-table tr:last-child td { border-bottom: 0; }
+
+/* "How to cite this" box for original data. */
+.how-to-cite {
+  background: #FFF8EA;
+  border: 2px dashed var(--ink);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin: 1.6rem 0;
+}
+.how-to-cite .cite-title {
+  font-family: var(--marker);
+  font-size: 1.15rem;
+  margin: 0 0 0.4rem;
+}
+.how-to-cite p, .how-to-cite code { font-size: 0.95rem; }
+.how-to-cite code {
+  display: block;
+  padding: 0.5rem 0.6rem;
+  overflow-x: auto;
+}

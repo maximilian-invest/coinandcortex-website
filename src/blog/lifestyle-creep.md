@@ -8,10 +8,15 @@ pillar: true
 image: /assets/img/blog/lifestyle-creep.webp
 image_alt: Doodle of four stick figures running on treadmills next to a big red stop sign
 video: IHQU1KyB7Aw
+definition: Lifestyle creep is the gradual rise in a person's spending that tracks each increase in their income, so a larger paycheck leaves roughly the same amount left over at the end of the month.
+takeaways: Lifestyle creep, also called lifestyle inflation, is the slow rise in spending that matches rising income, so earning more can leave the same amount left over each month. || In Brickman and colleagues' small lottery study, winners rated present happiness 4.00 against 3.82 for a comparison group and took less pleasure (3.33 vs 3.82) from everyday events. || Luttmer's Quarterly Journal of Economics study found that, holding own income constant, a rise in neighbours' earnings cut happiness by about as much as an equal-sized fall in one's own income. || Thaler and Benartzi's Save More Tomorrow program lifted participants' average saving rate from 3.5% to 13.6% over about 40 months by committing future pay rises to savings in advance. || You beat lifestyle creep by deciding where a raise goes before it arrives, protecting a few cheap pleasures, and auditing recurring bills once a year.
+updated: 2026-10-27
 date: 2026-10-27
 ---
 
-You get the raise you wanted. For a month or two, life feels roomier. Then, somehow, the money is gone again, absorbed into a slightly nicer version of the life you already had. You are not reckless; you just upgraded, quietly, a little at a time. This article explains how that happens, why it is so hard to feel, and how to keep more of your next raise without turning into a miser.
+You get the raise you wanted. For a month or two, life feels roomier. Then, somehow, the money is gone again, absorbed into a slightly nicer version of the life you already had. You are not reckless; you just upgraded, quietly, a little at a time.
+
+This article explains how that happens, why it is so hard to feel, and how to keep more of your next raise without turning into a miser. Along the way we lean on the primary research: the lottery-winner study behind the "hedonic treadmill," the economics of comparing yourself to your neighbours, and a savings program that quietly doubled how much people put aside.
 
 > **Short answer:** Lifestyle creep (also called lifestyle inflation) is the slow rise in your spending that tracks every increase in your income, so a bigger paycheck leaves you with the same amount left over at the end of the month. It happens because small upgrades feel reasonable, become permanent, and quietly ratchet up your fixed costs. You beat it by deciding in advance where a raise goes, protecting a few cheap pleasures, and auditing your recurring bills once a year.
 
@@ -29,7 +34,7 @@ Yes. "Lifestyle creep" and "lifestyle inflation" are two names for the same thin
 
 ## Why lifestyle creep is so hard to feel
 
-Three features make lifestyle creep almost invisible while it is happening.
+It is almost invisible while it is happening because three features hide it. The upgrades are small, the costs are recurring, and the voice justifying them never stops.
 
 **The upgrades are small and reasonable.** Nobody wakes up and decides to double their spending. You decide, once, that you have earned a better coffee, or that the extra legroom is worth it this time. Small is the whole trick: a jump you would question, a drift you accept.
 
@@ -47,15 +52,15 @@ Lifestyle creep is not a character flaw. It is powered by three well-studied for
 
 Psychologists use the phrase "hedonic treadmill" (sometimes "hedonic adaptation") to describe how quickly we get used to good things. A pleasure that thrilled you last year becomes the unremarkable baseline this year, so you need something more to feel the same lift.
 
-The famous illustration is an old study by Brickman, Coates and Janoff-Bulman comparing lottery winners with people who had suffered serious accidents. Winners were not as wildly happier than a comparison group as you might expect, and took less pleasure from ordinary events. Be honest about this one: the sample was small, so treat it as a striking early clue rather than hard proof. The broader body of adaptation research points the same way. We adjust.
+The famous illustration is a study by Brickman, Coates and Janoff-Bulman that compared 22 major lottery winners with 22 people from the same area and 29 accident victims left paralysed. The winners rated their present happiness at 4.00 on a 5-point scale, only a touch above the comparison group's 3.82, and the gap was not statistically significant. More tellingly, the winners took significantly *less* pleasure from a list of mundane everyday events (talking with a friend, eating breakfast, hearing a joke), scoring 3.33 against the comparison group's 3.82. Be honest about this one: the sample was small, so treat it as a striking early clue rather than hard proof. The broader body of adaptation research points the same way. We adjust.
 
-The useful news is that adaptation can be slowed. Work by Sheldon and Lyubomirsky on what they call the hedonic adaptation prevention model suggests two things help a good change keep feeling good: *appreciation* (actively noticing and savouring it) and *variety* (keeping the experience fresh rather than letting it harden into routine). You adapt fastest to things you stop noticing. The practical lesson for spending: an upgrade you take for granted a week later was a bad buy; one you keep appreciating might be worth it.
+The useful news is that adaptation can be slowed. Sheldon and Lyubomirsky tested what they call the hedonic adaptation prevention model and found two things help a good change keep feeling good: *appreciation* (actively noticing and savouring it) and *variety* (keeping the experience fresh rather than letting it harden into routine). As they put it, appreciation is the psychological opposite of adaptation. The practical lesson for spending: an upgrade you take for granted a week later was a bad buy; one you keep appreciating might be worth it.
 
 ### Engine 2: Keeping up with the Joneses
 
 Humans judge their situation by comparison, not in absolute terms. Your income feels good or bad largely relative to the people around you. The economist Thorstein Veblen captured the showy end of this over a century ago with his idea of "conspicuous consumption," spending designed to signal status.
 
-There is harder evidence too. Economist Erzo Luttmer, in a study pointedly titled "Neighbors as Negatives," found people reported lower satisfaction when those around them earned more, holding their own income constant. Your neighbour's new kitchen can make your perfectly good kitchen feel shabby, though nothing about it changed. That is the engine: not what you have, but what you have compared to the people in view.
+There is harder evidence too. The economist Erzo Luttmer, in a study pointedly titled "Neighbors as Negatives," found that holding a person's own income constant, higher earnings among their neighbours were linked to lower reported happiness. His point estimates imply something striking: a rise in neighbours' earnings cut happiness by about as much as an equal-sized fall in the person's own income. Your neighbour's new kitchen can make your perfectly good kitchen feel shabby, though nothing about it changed. That is the engine: not what you have, but what you have compared to the people in view.
 
 The opposite of this is quietly powerful, and it is the subject of the video below. The people who build real wealth often do the reverse of lifestyle creep: they let their income rise while keeping their visible spending flat, so almost no one around them can tell.
 
@@ -65,9 +70,9 @@ If high earners who still feel broke are a puzzle to you, that pattern has its o
 
 ### Engine 3: The Diderot effect
 
-In an essay from the 1700s titled "Regrets for my Old Dressing Gown," the French philosopher Denis Diderot described being given a beautiful new scarlet robe. Next to it, everything in his study suddenly looked shabby, so he replaced his chair, then his desk, his prints, his shelves. One elegant gift dragged his whole room, and his budget, upward, and left him oddly unhappy about it.
+In an essay from 1769 titled "Regrets for my Old Dressing Gown," the French philosopher Denis Diderot described being given a beautiful new scarlet robe. Next to it, everything in his study suddenly looked shabby, so he replaced his straw chair with a leather one, then his desk, his prints, his shelves. One elegant gift dragged his whole room, and his budget, upward, and left him oddly unhappy about it. "All is now discordant," he wrote. "No more coordination, no more unity, no more beauty."
 
-The anthropologist Grant McCracken later named this the "Diderot effect": the way a single purchase can trigger a cascade of matching upgrades, because our possessions form a consistent set and a new, nicer item makes the rest feel out of place. New phone, so now the old case looks cheap. New sofa, so the curtains have to go. One upgrade sets the standard, and the rest follow to meet it.
+The anthropologist Grant McCracken later named this the "Diderot effect" in his book *Culture and Consumption*, defining it as the force that pushes a person to keep a consistent set of possessions. A new, nicer item makes the rest feel out of place, so one purchase triggers a cascade of matching upgrades. New phone, so now the old case looks cheap. New sofa, so the curtains have to go. One upgrade sets the standard, and the rest follow to meet it.
 
 ## Lifestyle creep examples: the small upgrades that stick
 
@@ -92,7 +97,7 @@ Here is the original framework for this article. By the time a raise hits your a
 
 A simple version: at least half of any raise goes automatically to savings or a specific goal, and the rest is yours to enjoy with zero guilt. The exact split is up to you. The point is that it is decided ahead of time and, ideally, automated so you never see the saved half as spendable.
 
-This is not willpower folklore. It is grounded in a well-known programme by economists Richard Thaler and Shlomo Benartzi called "Save More Tomorrow," which got people to commit *in advance* to directing a share of their *future* pay rises into savings. Because it came out of money people did not yet have, it sidestepped the pain of cutting current spending, and savings rates rose substantially. You are running the same play on yourself.
+This is not willpower folklore. It builds on a well-documented program by the economists Richard Thaler and Shlomo Benartzi called "Save More Tomorrow," which asked workers to commit *in advance* to directing a share of their *future* pay rises into their retirement savings. Because the extra saving came out of money people did not yet have, it sidestepped the pain of cutting current spending. In the first company to try it, the average saving rate among participants climbed from 3.5 % to 13.6 % over about 40 months, roughly four pay rises, and most people stayed enrolled. You are running the same play on yourself.
 
 Three habits make the Raise Rule stick:
 
@@ -102,13 +107,21 @@ Three habits make the Raise Rule stick:
 
 ## Good creep vs bad creep: not all spending is the treadmill
 
-This is not an argument for hoarding every penny. More income *should* buy you a better life. The question is whether an upgrade delivers lasting benefit or just resets your baseline.
+This is not an argument for hoarding every penny. More income *should* buy you a better life. The question is whether an upgrade delivers lasting benefit or just resets your baseline. The research points to a rough split between spending that tends to keep paying off and spending that fades fast.
 
-Some kinds of spending tend to hold up better than buying more stuff. Treat these as tendencies from the research, not guarantees:
+| | Good creep | Bad creep |
+|---|---|---|
+| What it buys | Time, experiences, relationships, a few things you keep appreciating | A higher baseline on things you stop noticing |
+| How it feels later | Still valued weeks and months on | Invisible within weeks, now just "normal" |
+| Effect on fixed costs | Often one-off or flexible | Usually locks in a higher monthly bill |
+| What research suggests | Experiences, buying time, and giving tend to lift happiness | Repeated material upgrades fade through adaptation |
+| Your move | Choose it on purpose, savour it | Starve it, audit it, cut it |
 
-- **Experiences over possessions.** Van Boven and Gilovich found people often got more lasting satisfaction from experiential purchases (a trip, a class, a concert) than material ones. Experiences resist comparison and improve in memory; objects just get old.
-- **Buying time.** Research by Whillans and colleagues found that spending to offload tasks you dislike was associated with greater happiness. Paying to skip a dreaded chore may beat another gadget.
-- **Spending on others.** Dunn, Aknin and Norton found spending on other people tended to boost happiness more than spending the same amount on yourself. Generosity is, oddly, a good-returning purchase.
+Three findings back the "good creep" side. Treat them as tendencies, not guarantees:
+
+- **Experiences over possessions.** Van Boven and Gilovich asked people which purchase had made them happier. Fully 57 % named an experiential purchase (a trip, a class, a concert) against 34 % who named a material one. Experiences resist comparison and improve in memory; objects just get old.
+- **Buying time.** Whillans and colleagues, across samples totalling 6,271 adults in the United States, Canada, Denmark and the Netherlands, found that people who spent money to buy themselves free time reported higher life satisfaction. In a field experiment, the same people felt happier after spending about $40 on a time-saving purchase than after spending $40 on a material one.
+- **Spending on others.** Dunn, Aknin and Norton gave people a small windfall and told some to spend it on themselves and others to spend it on someone else. Those who spent on others ended the day happier, and it made no difference whether the sum was $5 or $20. A later, larger replication found a weaker effect, so read this as suggestive rather than settled.
 
 The rough test: "bad creep" quietly raises your baseline and you stop noticing it within weeks. "Good creep" buys you time, memories, relationships, or something you keep appreciating. Spend on the second kind on purpose; starve the first kind.
 
@@ -122,7 +135,7 @@ The rough test: "bad creep" quietly raises your baseline and you stop noticing i
 
 **Mistake: confusing frugality with misery.** Cutting the cheap pleasures you enjoy while leaving the forgettable upgrades intact is exactly backwards. It feels like deprivation and saves little.
 
-**Big picture: lifestyle creep at the scale of a society.** In an essay from 1930, the economist John Maynard Keynes imagined that rising productivity could eventually shrink the working week to around 15 hours. Productivity did rise enormously, yet a full-time week is still far longer than that. One common explanation is that our wants grew along with our means, which is lifestyle creep at the scale of a whole society. For how that bargain shook out, see [why we still work 40 hours a week]({{BASE}}blog/why-do-we-work-40-hours-a-week/).
+**Big picture: lifestyle creep at the scale of a society.** In an essay from 1930, the economist John Maynard Keynes imagined that rising productivity might eventually allow "three-hour shifts or a fifteen-hour week." Productivity did rise enormously, yet a full-time week is still far longer than that. One common explanation is that our wants grew along with our means, which is lifestyle creep at the scale of a whole society. For how that bargain shook out, see [why we still work 40 hours a week]({{BASE}}blog/why-do-we-work-40-hours-a-week/).
 
 ## How to stop lifestyle creep: a step-by-step plan
 
@@ -142,6 +155,17 @@ The audit is one question applied to everything you pay for on repeat:
 Anything that gets a "no" or a hesitant "maybe" is a candidate to cut, downgrade, or renegotiate. Doing this on a set date each year turns a vague intention into a habit. Pairing the audit with a single annual "switching day," where you actually renegotiate or move your contracts, is where the real money comes back.
 
 [[cta:kit]]
+
+## Key terms
+
+- **Lifestyle creep (lifestyle inflation):** The gradual rise in spending that tracks rising income, so a bigger paycheck leaves roughly the same amount left over.
+- **Hedonic treadmill:** The tendency to adapt to improvements so they stop feeling special, pushing you to chase the next upgrade for the same lift.
+- **Hedonic adaptation:** The psychological process of getting used to a positive change until it feels normal.
+- **Hedonic adaptation prevention:** Sheldon and Lyubomirsky's model holding that continued appreciation and variety slow how fast a good change fades.
+- **Fixed costs:** Recurring commitments such as rent, loan payments, and subscriptions that renew automatically and resist being cut.
+- **Diderot effect:** The way a single new purchase triggers a cascade of matching upgrades so your possessions stay a consistent set.
+- **Conspicuous consumption:** Veblen's term for spending meant mainly to signal status to others.
+- **The Raise Rule:** Our framework of deciding in advance how any future raise is split between saving and spending, before the money arrives.
 
 ## Frequently asked questions
 
@@ -165,18 +189,25 @@ Decide where the raise goes before it arrives, then automate it. A common approa
 
 The hedonic treadmill is the tendency to adapt to good things so they stop feeling special, which pushes you to seek the next upgrade to get the same lift. With money, it means each spending improvement becomes your unremarkable baseline, so you chase more and never feel richer. Slowing it down by savouring what you already have, and adding variety, is more effective than spending more.
 
+### Does spending money ever reliably buy happiness?
+
+Some kinds hold up better than buying more stuff. Research suggests experiences, buying yourself free time, and spending on other people tend to lift happiness more than repeated material upgrades, which fade through adaptation. Spending on those on purpose is closer to good creep than bad creep.
+
 ### How often should I review my spending for creep?
 
 A full review once a year is enough for most people, built around the question "would I sign up for this again today at this price?" for every recurring cost. Picking a fixed annual date turns it into a habit rather than something you keep meaning to do.
 
-## Sources
+## Sources & methodology
+
+How we researched this: we read the primary sources listed below (peer-reviewed papers via their DOIs, an NBER working paper, and the original Diderot and Keynes essays) and quote each number exactly as the source reports it, for the sample and setting that source studied. Where a famous finding rests on a small sample (the lottery-winner study) or has a mixed replication record (prosocial spending), we say so in the text. We do not run our own surveys, and the "Raise Rule" is our own framework, not a claim from the literature. The academic publishers below block automated requests, so some links may prompt for access; each DOI resolves to the cited article. Spot a mistake? Email us and we will fix it.
 
 - Brickman, Coates & Janoff-Bulman, *Lottery Winners and Accident Victims: Is Happiness Relative?*, Journal of Personality and Social Psychology. [DOI](https://doi.org/10.1037/0022-3514.36.8.917)
 - Sheldon & Lyubomirsky, *The Challenge of Staying Happier: Testing the Hedonic Adaptation Prevention Model*, Personality and Social Psychology Bulletin. [DOI](https://doi.org/10.1177/0146167212436400)
-- Luttmer, *Neighbors as Negatives: Relative Earnings and Well-Being*, Quarterly Journal of Economics. [DOI](https://doi.org/10.1093/qje/120.3.963)
+- Luttmer, *Neighbors as Negatives: Relative Earnings and Well-Being*, Quarterly Journal of Economics. [DOI](https://doi.org/10.1093/qje/120.3.963) (open-access working paper: [NBER w10667](https://www.nber.org/papers/w10667))
 - Thaler & Benartzi, *Save More Tomorrow: Using Behavioral Economics to Increase Employee Saving*, Journal of Political Economy. [DOI](https://doi.org/10.1086/380085)
 - Van Boven & Gilovich, *To Do or to Have? That Is the Question*, Journal of Personality and Social Psychology. [DOI](https://doi.org/10.1037/0022-3514.85.6.1193)
-- Whillans, Dunn, Smeets, Bekkers & Norton, *Buying Time Promotes Happiness*, PNAS. [DOI](https://doi.org/10.1073/pnas.1706541114)
+- Whillans, Dunn, Smeets, Bekkers & Norton, *Buying Time Promotes Happiness*, Proceedings of the National Academy of Sciences. [DOI](https://doi.org/10.1073/pnas.1706541114)
 - Dunn, Aknin & Norton, *Spending Money on Others Promotes Happiness*, Science. [DOI](https://doi.org/10.1126/science.1150952)
 - McCracken, *Culture and Consumption: New Approaches to the Symbolic Character of Consumer Goods and Activities*, Indiana University Press. [iupress.org](https://iupress.org/9780253206282/culture-and-consumption/)
 - Diderot, *Regrets for my Old Dressing Gown*, translated for the Marxists Internet Archive. [marxists.org](https://www.marxists.org/reference/archive/diderot/1769/regrets.htm)
+- Keynes, *Economic Possibilities for our Grandchildren*. [panarchy.org](https://www.panarchy.org/keynes/possibilities.html)

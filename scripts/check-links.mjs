@@ -120,12 +120,17 @@ async function main() {
     const rel = path.relative(DIST, file);
     const html = await readFile(file, "utf8");
 
-    // leftover placeholders
-    const ph = html.match(/\{\{[^}]*\}\}/g);
+    // leftover placeholders. Match the build's own placeholder grammar
+    // ({{UPPER_SNAKE}}) so legitimate content braces (e.g. a BibTeX
+    // "author = {{Coin and Cortex}}" citation) are not false-flagged.
+    const ph = html.match(/\{\{[A-Z_]+\}\}/g);
     if (ph) problems.push(`${rel}: leftover placeholder(s): ${[...new Set(ph)].join(", ")}`);
 
-    // year numbers (evergreen check)
-    const years = visibleText(html).match(/\b20\d\d\b/g);
+    // year numbers (evergreen check). The dedicated research/dataset page is
+    // exempt: per the project rules it may show study publication years and its
+    // own "data compiled" date (see COMMON.md).
+    const evergreenExempt = rel.startsWith("research/");
+    const years = evergreenExempt ? null : visibleText(html).match(/\b20\d\d\b/g);
     if (years) problems.push(`${rel}: contains year number(s): ${[...new Set(years)].join(", ")}`);
 
     // links

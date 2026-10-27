@@ -33,6 +33,11 @@ export default {
   // YouTube channel URL (used for all "Watch on YouTube" links and the footer).
   YOUTUBE_CHANNEL: "https://www.youtube.com/@coinandcortex",
 
+  // IndexNow key (Bing/Yandex/Seznam instant indexing). Generated once; the
+  // build publishes it at /<key>.txt and scripts/indexnow.mjs submits URLs.
+  // Rotate by replacing with a new 32-hex string and re-deploying.
+  INDEXNOW_KEY: "a34bcef37469ed671bf6499d9e798f4b",
+
   // ---------------------------------------------------------------------------
   // Domain
   // ---------------------------------------------------------------------------

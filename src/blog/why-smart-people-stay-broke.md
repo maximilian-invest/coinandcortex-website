@@ -8,6 +8,9 @@ pillar: true
 image: /assets/img/blog/why-smart-people-stay-broke.webp
 image_alt: Doodle of a worried round-headed character with a big pink brain, sitting on the floor surrounded by piles of unpaid bills
 video: 7jiqngd_VxM
+definition: Financial intelligence is the skill of turning income into lasting security through systems and behaviour rather than raw IQ, since higher intelligence reliably raises income but barely moves net worth.
+takeaways: Intelligence mainly helps people earn, not keep: Zagorsky's study found each IQ point raised income by a few hundred dollars a year but showed no reliable link to net worth. || Financial education is a weak lever on its own: Fernandes, Lynch and Netemeyer's meta-analysis found it explained only about 0.1% of the variation in financial behaviour, with effects fading over time. || A sharp mind does not protect against bias: West, Meserve and Stanovich found more cognitively sophisticated people had no smaller, and sometimes a larger, bias blind spot. || What builds wealth is systems, not willpower: Madrian and Shea found that switching a pension from opt-in to automatic enrolment moved most employees from not saving to staying enrolled. || Money worry can tax thinking itself: Mani and colleagues found Indian sugarcane farmers reasoned worse while poor before harvest than after, a gap they likened to roughly 13 IQ points.
+updated: 2026-10-27
 date: 2026-10-27
 ---
 
@@ -25,7 +28,7 @@ Being clever feels like it should settle the money question. It does not. The li
 
 Start with the money coming in, because that is where intelligence genuinely helps.
 
-The economist Jay Zagorsky looked at a large American study that followed thousands of people for decades and gave each of them an IQ-style test. He found that each extra IQ point was worth a meaningful bump in annual income, somewhere in the low hundreds of dollars per point in his data. So far, so expected. Smart pays, on the salary line.
+The economist Jay Zagorsky looked at a large American study that followed thousands of people for decades and gave each of them an IQ-style test. He found that each extra IQ point was worth a meaningful bump in annual income, a few hundred dollars per point in his data. So far, so expected. Smart pays, on the salary line.
 
 Then he looked at wealth, meaning net worth, the stuff you actually keep after the bills. Once he compared people with similar backgrounds, the clear income link mostly vanished. Higher IQ did not reliably translate into a bigger pile of saved money.
 
@@ -130,6 +133,19 @@ None of these need a high IQ. That is the point. Do them in order.
 
 You do not have to out-think the problem. You just have to out-build it. The smartest money move you make will not feel smart at all. It will feel like one quiet transfer you set up once and then forgot you ever made.
 
+## Key terms
+
+- **Financial intelligence:** The skill of turning income into lasting security through systems and behaviour rather than raw IQ.
+- **The Keep Gap:** Our term for the distance between what your brain helps you earn and what it helps you hold on to.
+- **Net worth:** What you own minus what you owe; the money you actually keep, as distinct from income.
+- **Financial distress:** Money trouble such as missed payments, maxed-out credit cards, or bankruptcy.
+- **Bias blind spot:** The tendency to spot thinking biases in other people while missing them in yourself.
+- **Overconfidence:** An inflated belief in your own judgement that, in investing, tends to drive excess trading and lower returns.
+- **Default effect:** The strong pull of whatever option is pre-selected, such as automatic pension enrolment, because most people simply stay with it.
+- **Propensity to plan:** A measured tendency to set and track financial plans, linked to greater wealth independent of income.
+- **Self-distancing:** Reasoning about your own problem as if advising someone else, which tends to produce wiser decisions.
+- **Financial literacy:** A working grasp of core money concepts such as compound interest, inflation, and spreading risk.
+
 ## Frequently asked questions
 
 ### Does a high IQ actually help with money at all?
@@ -156,7 +172,9 @@ Not a waste, but a weak lever on its own. A large meta-analysis found that finan
 
 Decide the rules in advance, while you are calm, and write them down so the tired, tempted version of you cannot renegotiate. Then add distance: ask what you would advise a friend in the same spot. Both tactics work because they take the decision away from the in-the-moment brain that is so good at building a convincing case for the wrong thing.
 
-## Sources
+## Sources & methodology
+
+How we researched this: we read the primary sources listed below (peer-reviewed papers via their DOIs, an official Federal Reserve history, and a Royal Society journal article) and quote each number exactly as the source reports it, for the sample and setting that source studied. Where a finding is contested we say so in the text: the poverty-and-cognition result has a mixed replication record, the famous Newton quote is almost certainly apocryphal, and the self-distancing study tested relationship dilemmas rather than money. We do not run our own surveys, and the "Keep Gap", the Smart-but-Broke Self-Check, and the five-rule setup are our own frameworks, not claims from the literature. Several academic publishers block automated requests, so some links may prompt for access; each DOI resolves to the cited article. Spot a mistake? Email us and we will fix it.
 
 - Jay L. Zagorsky, *Do you have to be smart to be rich? The impact of IQ on wealth, income and financial distress*, Intelligence. [DOI](https://doi.org/10.1016/j.intell.2007.02.003)
 - Annamaria Lusardi and Olivia S. Mitchell, *The Economic Importance of Financial Literacy: Theory and Evidence*, Journal of Economic Literature. [DOI](https://doi.org/10.1257/jel.52.1.5)

@@ -50,6 +50,14 @@ const PAGES = [
   { file: "404.html",            out: "404.html", rootRelative: true },
 ];
 
+// Research / dataset page is registered only once its source exists, so the
+// build keeps working while that page is still being authored.
+const RESEARCH_OUT = "research/loyalty-penalty-evidence/index.html";
+const researchExists = existsSync(path.join(SRC, "pages", "research-loyalty-penalty-evidence.html"));
+if (researchExists) {
+  PAGES.push({ file: "research-loyalty-penalty-evidence.html", out: RESEARCH_OUT });
+}
+
 // Relative prefix for a given output path. "shop/index.html" -> "../".
 function baseFor(outPath, rootRelative) {
   if (rootRelative) return "/";
@@ -261,7 +269,7 @@ function markdownToHtml(md, ctx = {}) {
   flushPara();
 
   let html = out.join("\n");
-  const tocItems = headings.filter((x) => !/^(sources|references)$/i.test(x.text));
+  const tocItems = headings.filter((x) => !/^(sources( ?& ?methodology)?|references)$/i.test(x.text));
   const toc = tocItems.length
     ? `<nav class="toc card" aria-label="On this page"><p class="toc-title">On this page</p><ol>${tocItems.map((x) => `<li><a href="#${x.id}">${esc(x.text)}</a></li>`).join("")}</ol></nav>`
     : "";
@@ -285,6 +293,44 @@ function extractFaq(md) {
     if (cur && l.trim()) cur.a.push(l.trim().replace(/^[-*]\s+|^\d+\.\s+/, ""));
   }
   return items.filter((x) => x.a.length).map((x) => ({ q: x.q, a: stripTags(inlineMd(x.a.join(" "))) }));
+}
+
+// True when the post ends with the canonical "## Sources & methodology" section,
+// whose heading slugifies to the stable id "sources-methodology".
+function hasSourcesMethodology(md) {
+  return /^##\s+sources\s*&\s*methodology\s*$/im.test(md);
+}
+
+// Source URLs from the Sources (& methodology) section -> CreativeWork.citation.
+function extractCitations(md) {
+  const lines = md.split("\n");
+  const start = lines.findIndex((l) => /^##\s+sources(\s*&\s*methodology)?\s*$/i.test(l));
+  if (start < 0) return [];
+  const urls = [];
+  const re = /\]\((https?:\/\/[^)\s]+)\)/g;
+  for (let i = start + 1; i < lines.length; i++) {
+    if (/^##\s/.test(lines[i])) break;
+    let m;
+    while ((m = re.exec(lines[i]))) urls.push(m[1]);
+  }
+  return [...new Set(urls)];
+}
+
+// "## Key terms" glossary bullets `- **Term:** definition` -> DefinedTermSet.
+function extractKeyTerms(md) {
+  const lines = md.split("\n");
+  const start = lines.findIndex((l) => /^##\s+key terms\s*$/i.test(l));
+  if (start < 0) return [];
+  const terms = [];
+  for (let i = start + 1; i < lines.length; i++) {
+    if (/^##\s/.test(lines[i])) break;
+    const m = lines[i].match(/^\s*[-*]\s+\*\*(.+?)\*\*:?\s*(.+)$/);
+    if (!m) continue;
+    const term = m[1].replace(/:\s*$/, "").trim();
+    const def = m[2].replace(/^:\s*/, "").trim();
+    if (term && def) terms.push({ term: stripTags(inlineMd(term)), def: stripTags(inlineMd(def)) });
+  }
+  return terms;
 }
 
 // -----------------------------------------------------------------------------
@@ -399,9 +445,15 @@ async function loadBlogPosts() {
       imageAlt: meta.image_alt || "",
       date: meta.date || "",
       updated: meta.updated || meta.date || "",
+      definition: meta.definition || "",
+      takeaways: (meta.takeaways || "").split(" || ").map((s) => s.trim()).filter(Boolean),
       html,
+      md: body,
       hasVideo: hasVideo.v,
       faq: extractFaq(body),
+      citations: extractCitations(body),
+      keyTerms: extractKeyTerms(body),
+      hasSourcesMethodology: hasSourcesMethodology(body),
       words,
       minutes: Math.max(1, Math.round(words / 230)),
     });
@@ -489,11 +541,24 @@ function orgLd() {
     "@type": "Organization",
     "@id": ORG_ID,
     name: SITE_NAME,
+    alternateName: "Coin and Cortex",
     url: `${SITE_URL}/`,
     logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo.webp`, width: 256, height: 256 },
     description: "Coin & Cortex explains the psychology of money and behavioral economics with doodle videos and practical, sourced articles.",
     sameAs: [config.YOUTUBE_CHANNEL],
     founder: { "@type": "Person", name: config.SELLER_NAME },
+    knowsAbout: [
+      "behavioral economics",
+      "psychology of money",
+      "consumer pricing",
+      "the loyalty penalty",
+      "personalized pricing",
+      "dynamic pricing",
+      "lifestyle creep",
+      "status quo bias",
+      "personal finance habits",
+    ],
+    publishingPrinciples: `${SITE_URL}/about/#editorial-standards`,
     email: config.CONTACT_EMAIL,
   };
 }
@@ -639,7 +704,13 @@ async function build() {
     "{{BLOG_LIST}}": blogListHtml(posts),
     "{{BLOG_TEASER}}": blogTeaserHtml(posts),
     "{{BUY_BUTTON}}": buyButton(),
+    // Footer "Research" link, present only once the research page is built.
+    "{{RESEARCH_NAV}}": researchExists ? `<a href="{{BASE}}research/loyalty-penalty-evidence/">Research</a>` : "",
   };
+
+  // Captured while rendering the research page, reused for sitemap + llms.txt.
+  let researchUpdated = "";
+  let researchMeta = null;
 
   function assemble({ title, description, body, out, base, rootRelative, robots, ogType, ogImage, ogImageAlt, ld, extraHead = [], script = "" }) {
     const extra = [...extraHead];
@@ -670,6 +741,37 @@ async function build() {
     if (p.out === "index.html") {
       ld.push(orgLd(), websiteLd());
       ld.push({ "@type": "WebPage", "@id": `${url}#webpage`, url, name: title, description, isPartOf: { "@id": SITE_ID }, about: { "@id": ORG_ID }, inLanguage: "en" });
+    } else if (p.out === RESEARCH_OUT) {
+      // Original-data page: WebPage whose mainEntity is a CC-BY Dataset with a
+      // CSV distribution. Dates/keywords come from the page's own front matter.
+      researchUpdated = meta.updated || "";
+      researchMeta = { title, description, url };
+      const dsId = `${url}#dataset`;
+      const keywords = meta.keywords || meta.keyword || "";
+      ld.push(orgLd());
+      ld.push(breadcrumbLd([
+        { name: "Home", url: `${SITE_URL}/` },
+        { name: crumbName, url },
+      ]));
+      ld.push({
+        "@type": "Dataset",
+        "@id": dsId,
+        name: meta.dataset_name || title,
+        description,
+        url,
+        license: "https://creativecommons.org/licenses/by/4.0/",
+        isAccessibleForFree: true,
+        creator: { "@id": ORG_ID },
+        publisher: { "@id": ORG_ID },
+        ...(meta.updated ? { dateModified: meta.updated } : {}),
+        ...(keywords ? { keywords } : {}),
+        distribution: [{
+          "@type": "DataDownload",
+          contentUrl: `${SITE_URL}/downloads/loyalty-penalty-evidence.csv`,
+          encodingFormat: "text/csv",
+        }],
+      });
+      ld.push({ "@type": "WebPage", "@id": `${url}#webpage`, url, name: title, description, isPartOf: { "@id": SITE_ID }, inLanguage: "en", mainEntity: { "@id": dsId } });
     } else if (!p.rootRelative) {
       ld.push(breadcrumbLd([{ name: "Home", url: `${SITE_URL}/` }, { name: crumbName, url }]));
       const type = p.out === "about/index.html" ? "AboutPage" : p.out === "blog/index.html" ? "CollectionPage" : "WebPage";
@@ -722,12 +824,26 @@ async function build() {
     const url = pageUrl(out);
     const hub = hubById(post.hub);
     const crumbs = `<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{{BASE}}">Home</a></li><li><a href="{{BASE}}blog/">Blog</a></li>${hub ? `<li><a href="{{BASE}}blog/#${hub.id}">${esc(hub.name)}</a></li>` : ""}<li aria-current="page">${esc(post.title)}</li></ol></nav>`;
-    const byline = `<p class="byline">By <a href="{{BASE}}about/">the Coin &amp; Cortex team</a> · ${post.minutes} min read · <a href="{{BASE}}about/#editorial-standards">How we research</a></p>`;
+    // "Fact-checked" links to the stable #sources-methodology id, but only when
+    // the post actually carries that canonical section (keeps old posts valid).
+    const factChecked = post.hasSourcesMethodology
+      ? ` · <a href="#sources-methodology">Fact-checked against primary sources</a>`
+      : "";
+    const byline = `<p class="byline">By <a href="{{BASE}}about/">the Coin &amp; Cortex team</a> · ${post.minutes} min read · <a href="{{BASE}}about/#editorial-standards">How we research</a>${factChecked}</p>`;
+    // Answer-first block: a citable definition + key takeaways, high in the DOM.
+    const takeaways = (post.definition || post.takeaways.length)
+      ? `<aside class="key-takeaways card" aria-labelledby="key-takeaways-h">
+        <h2 id="key-takeaways-h" class="kt-title">Key takeaways</h2>
+        ${post.definition ? `<p class="definition"><strong>Definition:</strong> ${inlineMd(post.definition)}</p>` : ""}
+        ${post.takeaways.length ? `<ul>${post.takeaways.map((t) => `<li>${inlineMd(t)}</li>`).join("")}</ul>` : ""}
+      </aside>`
+      : "";
     const hero = post.image ? `<figure class="post-hero">${heroImg(post, { eager: true })}</figure>` : "";
     const body = postLayout
       .replace(/\{\{BREADCRUMBS\}\}/g, crumbs)
       .replace(/\{\{POST_TITLE\}\}/g, esc(post.title))
       .replace(/\{\{POST_BYLINE\}\}/g, byline)
+      .replace(/\{\{KEY_TAKEAWAYS\}\}/g, takeaways)
       .replace(/\{\{POST_HERO\}\}/g, hero)
       .replace(/\{\{POST_BODY\}\}/g, post.html)
       .replace(/\{\{RELATED\}\}/g, relatedHtml(post, posts))
@@ -742,13 +858,14 @@ async function build() {
         headline: post.title.length > 110 ? post.seoTitle : post.title,
         description: post.description,
         image: [imgUrl, ogUrl],
-        author: { "@type": "Organization", name: SITE_NAME, url: `${SITE_URL}/about/` },
+        author: { "@id": ORG_ID },
         publisher: { "@id": ORG_ID },
         inLanguage: "en",
         wordCount: post.words,
-        ...(post.keyword ? { keywords: post.keyword } : {}),
+        ...(post.keyword ? { keywords: post.keyword, about: { "@type": "Thing", name: post.keyword } } : {}),
         ...(hub ? { articleSection: hub.name } : {}),
         ...(post.date ? { datePublished: isoDate(post.date), dateModified: isoDate(post.updated) } : {}),
+        ...(post.citations.length ? { citation: post.citations } : {}),
         isPartOf: { "@id": SITE_ID },
       },
       orgLd(),
@@ -760,6 +877,20 @@ async function build() {
       ]),
     ];
     if (post.faq.length) ld.push(faqLd(post.faq));
+    if (post.keyTerms.length) {
+      const setId = `${url}#key-terms`;
+      ld.push({
+        "@type": "DefinedTermSet",
+        "@id": setId,
+        name: `Key terms: ${post.title}`,
+        hasDefinedTerm: post.keyTerms.map((t) => ({
+          "@type": "DefinedTerm",
+          name: t.term,
+          description: t.def,
+          inDefinedTermSet: { "@id": setId },
+        })),
+      });
+    }
     const extraHead = [`  <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} blog" href="${SITE_URL}/blog/feed.xml">`];
     if (post.date) {
       extraHead.push(`  <meta property="article:published_time" content="${isoDate(post.date)}">`);
@@ -795,10 +926,28 @@ async function build() {
   if (SITE_URL) await writeOut("CNAME", new URL(SITE_URL).host + "\n");
 
   // --- robots.txt (always). /dl/ (paid download) must never be crawled. ---
+  // We welcome AI search/answer crawlers (we want to be cited). A named group
+  // fully overrides the `*` group for that agent, so every AI group repeats the
+  // /dl/ Disallow. See geo_strategy.md for the per-bot rationale and sources.
+  const AI_CRAWLERS = [
+    "OAI-SearchBot", "ChatGPT-User", "GPTBot",      // OpenAI (search, user fetch, training)
+    "PerplexityBot", "Perplexity-User",              // Perplexity (index, user fetch)
+    "ClaudeBot", "Claude-SearchBot", "Claude-User",  // Anthropic (training/index, search, user fetch)
+    "Google-Extended",                               // Google Gemini / Vertex grounding opt-in
+    "Applebot-Extended",                             // Apple Intelligence opt-in
+    "Bingbot",                                       // Bing index (powers Copilot & ChatGPT search)
+    "CCBot",                                         // Common Crawl (broad AI training corpus)
+  ];
+  const robotsGroups = ["User-agent: *\nAllow: /\nDisallow: /dl/"]
+    .concat(AI_CRAWLERS.map((b) => `User-agent: ${b}\nAllow: /\nDisallow: /dl/`))
+    .join("\n\n");
   const robots = SITE_URL
-    ? `User-agent: *\nAllow: /\nDisallow: /dl/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
-    : `User-agent: *\nAllow: /\nDisallow: /dl/\n`;
+    ? `${robotsGroups}\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
+    : `${robotsGroups}\n`;
   await writeOut("robots.txt", robots);
+
+  // --- IndexNow key verification file (Bing/Yandex/Seznam instant indexing) ---
+  if (config.INDEXNOW_KEY) await writeOut(`${config.INDEXNOW_KEY}.txt`, `${config.INDEXNOW_KEY}\n`);
 
   // --- sitemap.xml + RSS (only when SITE_URL is set) ---
   if (SITE_URL) {
@@ -806,7 +955,8 @@ async function build() {
     const entries = [];
     for (const p of PAGES) {
       if (p.rootRelative || p.noSitemap) continue;
-      const lastmod = p.out === "index.html" || p.out === "blog/index.html" ? newest : "";
+      let lastmod = p.out === "index.html" || p.out === "blog/index.html" ? newest : "";
+      if (p.out === RESEARCH_OUT) lastmod = researchUpdated || newest;
       entries.push({ loc: pageUrl(p.out), lastmod });
     }
     for (const post of posts) entries.push({ loc: `${SITE_URL}/blog/${post.slug}/`, lastmod: post.updated, image: post.image ? `${SITE_URL}/${post.image}` : "" });
@@ -830,6 +980,58 @@ async function build() {
         .join("\n") +
       `\n</channel>\n</rss>\n`;
     await writeOut("blog/feed.xml", rss);
+
+    // --- llms.txt (llmstxt.org): a curated map for AI answer engines ---
+    const oneLine = (s) => String(s).replace(/\s+/g, " ").trim();
+    const llms = [
+      `# ${SITE_NAME}`,
+      ``,
+      `> ${SITE_NAME} explains the psychology of money and behavioral economics in plain English, with doodle videos and practical, sourced articles for readers in the US, UK and EU.`,
+      ``,
+      `${SITE_NAME} is an independent, ad-free project. Editorial standards: every non-obvious factual claim is backed by a primary source (peer-reviewed studies via DOI, consumer regulators, or official statistics); we never invent statistics, studies, quotes or experts; and articles are written to stay evergreen. Report an error: ${config.CONTACT_EMAIL}.`,
+      ``,
+      `## Articles`,
+      ...posts.map((p) => `- [${p.title}](${SITE_URL}/blog/${p.slug}/): ${oneLine(p.definition || p.description)}`),
+    ];
+    if (researchExists && researchMeta) {
+      llms.push(
+        ``,
+        `## Research`,
+        `- [${researchMeta.title}](${researchMeta.url}): ${oneLine(researchMeta.description)}`,
+        `- [Loyalty penalty evidence dataset (CSV, CC BY 4.0)](${SITE_URL}/downloads/loyalty-penalty-evidence.csv): Original compiled dataset of published loyalty-penalty and pricing findings; each row is traceable to a primary source.`
+      );
+    }
+    llms.push(
+      ``,
+      `## About`,
+      `- [About ${SITE_NAME}](${SITE_URL}/about/): Who is behind the project, how we research and fact-check, how we use AI, and how to report an error.`,
+      ``,
+      `## Optional`,
+      `- [YouTube channel](${config.YOUTUBE_CHANNEL}): Doodle explainer videos on money psychology.`,
+      `- [RSS feed](${SITE_URL}/blog/feed.xml): New articles as they publish.`
+    );
+    await writeOut("llms.txt", llms.join("\n") + "\n");
+
+    // --- llms-full.txt: full article text for grounding, absolute URLs ---
+    const stripTokens = (s) =>
+      s.replace(/^\s*\[\[(toc|video:[^\]]*|cta:[^\]]*)\]\]\s*$/gm, "").replace(/\n{3,}/g, "\n\n");
+    const full = [
+      `# ${SITE_NAME} — full article text`,
+      ``,
+      `Source: ${SITE_URL}/ · Content belongs to ${SITE_NAME}; you may quote it with attribution and a link. Report an error: ${config.CONTACT_EMAIL}.`,
+      ``,
+    ];
+    for (const p of posts) {
+      const bodyMd = stripTokens(substitute(p.md, `${SITE_URL}/`)).trim();
+      full.push(`---`, ``, `# ${p.title}`, `URL: ${SITE_URL}/blog/${p.slug}/`);
+      if (p.definition) full.push(`Definition: ${p.definition}`);
+      if (p.takeaways.length) {
+        full.push(`Key takeaways:`);
+        for (const t of p.takeaways) full.push(`- ${t}`);
+      }
+      full.push(``, bodyMd, ``);
+    }
+    await writeOut("llms-full.txt", full.join("\n") + "\n");
   }
 
   const leftovers = await findLeftovers(DIST);
