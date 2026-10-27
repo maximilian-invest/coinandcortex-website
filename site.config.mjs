@@ -28,7 +28,7 @@ export default {
 
   // Public contact address. Placeholder until a real inbox is decided.
   // Swap before launch (appears in Impressum, Privacy, Terms and the Shop FAQ).
-  CONTACT_EMAIL: "[contact email]",
+  CONTACT_EMAIL: "coinandcortex@gmail.com",
 
   // YouTube channel URL (used for all "Watch on YouTube" links and the footer).
   YOUTUBE_CHANNEL: "https://www.youtube.com/@coinandcortex",
