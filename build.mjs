@@ -299,13 +299,18 @@ function videoEmbed(id, title) {
   const v = videoById(id);
   const t = title || (v ? v.title : "Watch on YouTube");
   const thumb = v ? `{{BASE}}assets/img/${v.thumb}.webp` : "";
+  // The consent notice sits on top of the facade as a sibling (not inside the
+  // <a>) so its privacy link stays a valid, separately clickable link.
   return `<figure class="video-embed">
+  <div class="yt-box">
   <a class="yt-facade" href="https://www.youtube.com/watch?v=${escAttr(id)}" data-yt="${escAttr(id)}" rel="noopener">
     ${thumb ? `<img src="${thumb}" width="640" height="360" loading="lazy" decoding="async" alt="">` : ""}
     <span class="yt-play" aria-hidden="true"></span>
     <span class="sr-only">Play video: </span><span class="yt-title">${esc(t)}</span>
   </a>
-  <figcaption>Video: ${esc(t)}. The player loads from YouTube only when you press play.</figcaption>
+  <p class="yt-consent">Loads YouTube; Google may set cookies. <a href="{{BASE}}privacy/#youtube">Privacy policy</a></p>
+  </div>
+  <figcaption>Video: ${esc(t)}. Nothing is loaded from YouTube until you press play.</figcaption>
 </figure>`;
 }
 
@@ -330,7 +335,7 @@ function ctaBox(kind) {
 }
 
 const VIDEO_SCRIPT = `<script>
-document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[data-yt]");if(!a||e.ctrlKey||e.metaKey||e.shiftKey)return;e.preventDefault();var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+a.getAttribute("data-yt")+"?autoplay=1&rel=0";f.title=a.querySelector(".yt-title").textContent;f.allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";f.allowFullscreen=true;f.width=640;f.height=360;a.replaceWith(f);});
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[data-yt]");if(!a||e.ctrlKey||e.metaKey||e.shiftKey)return;e.preventDefault();var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+a.getAttribute("data-yt")+"?autoplay=1&rel=0";f.title=a.querySelector(".yt-title").textContent;f.allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";f.allowFullscreen=true;f.width=640;f.height=360;(a.closest(".yt-box")||a).replaceWith(f);});
 </script>`;
 
 function videoCards() {

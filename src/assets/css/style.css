@@ -336,6 +336,9 @@ details[open] summary { margin-bottom: 0.5rem; }
 .yt-play::after { content: ""; position: absolute; left: 29px; top: 14px; border-style: solid; border-width: 11px 0 11px 19px; border-color: transparent transparent transparent #fff; }
 .yt-facade:hover .yt-play, .yt-facade:focus-visible .yt-play { background: #a3221d; }
 .yt-title { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.5rem 0.8rem; background: rgba(24, 22, 26, 0.85); font-weight: 600; font-size: 0.95rem; }
+.yt-box { position: relative; }
+.yt-consent { position: absolute; left: 0; right: 0; top: 0; margin: 0; padding: 0.35rem 0.8rem; background: rgba(24, 22, 26, 0.85); color: #fff; font-size: 0.85rem; border-radius: var(--radius) var(--radius) 0 0; border: 3px solid var(--ink); border-bottom: 0; }
+.yt-consent a { color: #fff; text-decoration: underline; }
 .video-embed iframe { width: 100%; height: auto; aspect-ratio: 16 / 9; border: 3px solid var(--ink); border-radius: var(--radius); }
 .video-embed figcaption { font-size: 0.88rem; color: #5c564b; margin-top: 0.4rem; }
 .cta { display: grid; gap: 1rem; margin: 1.8rem 0; align-items: center; }
