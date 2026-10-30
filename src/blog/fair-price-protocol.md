@@ -33,7 +33,7 @@ The good news: you don't need to become a full-time deal hunter. You just need a
 Here are the six moves of the **Fair Price Protocol**:
 
 1. **Set your number before you open the app.** Decide the most you'll pay before you browse, and write it down. Never buy straight from a push notification.
-2. **Do the second-screen check.** For bigger purchases, look at the same item on a second device, logged out. A different price is your cue to ask the seller or buy elsewhere.
+2. **Do the second-screen check.** For bigger purchases, look at the same item on a second device, logged out. A different price is your cue to ask the seller or buy elsewhere. The [Two-Window Test]({{BASE}}blog/browsing-history-prices/#the-two-window-test) shows how to run this check without getting fooled by ordinary price swings.
 3. **Trust the price history, not the sale badge.** "40% off" means little until you know what it cost before.
 4. **Hold a Switching Day, once a year.** List your contracts, get one new-customer price for each big one, then ask: "Can you match this, or should I switch?"
 5. **Give your AI shopper rules.** A hard budget it never reveals, at least three offers, and it asks you before any payment.

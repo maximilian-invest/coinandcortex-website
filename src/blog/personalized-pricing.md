@@ -101,7 +101,7 @@ Notice that three of the four are things you *do*, not things you *are*. That is
 
 **Myth: "A big store admitted it changes prices based on who I am."** Be careful here. Most well-documented cases are dynamic pricing (time and demand), steering (order of results), location-based pricing, or randomized testing, not proven person-by-person pricing of an identical item. Do not repeat an accusation about a named company unless there is a real source. The honest claim is that the *tools* exist and are widely sold, and that steering is common.
 
-**Myth: "Private browsing hides me, so I will get the cheap price."** Incognito mode clears cookies, but it does not hide your location (your internet connection still reveals your area) or your device type. Treat a logged-out check as a useful comparison, not a magic cloak.
+**Myth: "Private browsing hides me, so I will get the cheap price."** Incognito mode clears cookies, but it does not hide your location (your internet connection still reveals your area) or your device type. Treat a logged-out check as a useful comparison, not a magic cloak. We dug into what the studies actually show in [does your browsing history change the price you see]({{BASE}}blog/browsing-history-prices/).
 
 **Myth: "Clearing cookies always gets a better deal."** Sometimes a fresh, anonymous visitor is quoted *more*, not less, because the system cannot tell you are a bargain-hunter. The fix is not a ritual, it is comparison. Check more than one way and buy the lower number.
 
