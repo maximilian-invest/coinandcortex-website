@@ -136,6 +136,8 @@ Keep it calm, honest, and short. You're not fighting; you're asking a reasonable
 
 Notice what none of these do. They don't invent a rival offer. They don't threaten. They don't apologise for asking. You're simply holding up the real market price and asking the company to justify charging you more than a stranger.
 
+If you want the longer versions, including what to say when the agent pushes back and how to tell whether a retention offer is really a saving, we wrote a full guide on [how to negotiate lower bills]({{BASE}}blog/negotiate-lower-bills/).
+
 [[cta:checklist]]
 
 ## Common myths and mistakes
