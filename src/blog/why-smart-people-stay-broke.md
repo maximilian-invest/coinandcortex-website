@@ -80,7 +80,7 @@ A team led by Anandi Mani studied sugarcane farmers in India, testing the same p
 
 The honest footnote: a later study by Leandro Carvalho, Stephan Meier, and Stephan Wang ran a similar test around payday for lower-income American households and did *not* find the same drop. So the effect is debated. But the direction matches something you have probably felt: when the account is low, it is genuinely harder to think straight.
 
-If stress eats mental bandwidth, then the first fix for "smart but broke" is not a cleverer plan. It is a buffer, a cushion of cash that gives your brain room to work. You cannot out-think a problem while the problem is busy renting out your attention.
+If stress eats mental bandwidth, then the first fix for "smart but broke" is not a cleverer plan. It is a buffer, a cushion of cash that gives your brain room to work. You cannot out-think a problem while the problem is busy renting out your attention. (If you are not sure where your own money actually goes each month, start with our 30-minute diagnosis in [why am I always broke]({{BASE}}blog/why-am-i-always-broke/).)
 
 ## What actually predicts who keeps their money
 

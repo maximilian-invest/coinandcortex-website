@@ -42,7 +42,7 @@ It is almost invisible while it is happening because three features hide it. The
 
 **The "I deserve this" voice is persuasive.** After a raise or a hard stretch at work, a reward feels earned, and often it genuinely is. The problem is that this voice has no off switch. It justifies the upgrade, then the next one, then treats each new level as the normal floor you deserve to stay above.
 
-Meet Sam, our standing hypothetical. Sam got a 20 % raise (just an example number). Within a year, Sam's rent, car, phone plan, and subscriptions had all nudged up. Each decision made sense in the moment, yet the raise had vanished and Sam could not say where.
+Meet Sam, our standing hypothetical. Sam got a 20 % raise (just an example number). Within a year, Sam's rent, car, phone plan, and subscriptions had all nudged up. Each decision made sense in the moment, yet the raise had vanished and Sam could not say where. Lifestyle creep is one of several ways money quietly disappears; if you are unsure it is yours, the [nine reasons you are always broke]({{BASE}}blog/why-am-i-always-broke/) help you tell it apart from timing, irregular bills or fixed-cost load.
 
 ## The three engines driving lifestyle creep
 
