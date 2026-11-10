@@ -10,7 +10,7 @@ image_alt: Doodle of four stick figures running on treadmills next to a big red 
 video: IHQU1KyB7Aw
 definition: Lifestyle creep is the gradual rise in a person's spending that tracks each increase in their income, so a larger paycheck leaves roughly the same amount left over at the end of the month.
 takeaways: Lifestyle creep, also called lifestyle inflation, is the slow rise in spending that matches rising income, so earning more can leave the same amount left over each month. || In Brickman and colleagues' small lottery study, winners rated present happiness 4.00 against 3.82 for a comparison group and took less pleasure (3.33 vs 3.82) from everyday events. || Luttmer's Quarterly Journal of Economics study found that, holding own income constant, a rise in neighbours' earnings cut happiness by about as much as an equal-sized fall in one's own income. || Thaler and Benartzi's Save More Tomorrow program lifted participants' average saving rate from 3.5% to 13.6% over about 40 months by committing future pay rises to savings in advance. || You beat lifestyle creep by deciding where a raise goes before it arrives, protecting a few cheap pleasures, and auditing recurring bills once a year.
-updated: 2026-10-27
+updated: 2026-11-10
 date: 2026-10-27
 ---
 
@@ -87,7 +87,7 @@ Creep lives in specifics. Here are common ones, why each tends to stick, and the
 | Upgrades to things you own | "Pro" version, bigger size, faster tier | Diderot effect: the rest now feels inadequate | Did the old one actually fail me? |
 | Everyday treats | A premium version of a daily purchase | You adapt fast, so the lift disappears | Do I still notice this, or is it just baseline now? |
 
-Notice how many of these are recurring, not one-off. That is where the money really goes. Recurring costs also drift upward on their own, through price rises and the quiet penalty loyal customers pay, a trap covered in [the loyalty penalty]({{BASE}}blog/loyalty-penalty/).
+Notice how many of these are recurring, not one-off. That is where the money really goes. Recurring costs also drift upward on their own, through price rises and the quiet penalty loyal customers pay, a trap covered in [the loyalty penalty]({{BASE}}blog/loyalty-penalty/). For fifteen more examples, the trick that hides each one and a one-question audit, see [lifestyle creep examples]({{BASE}}blog/lifestyle-creep-examples/).
 
 ## The Raise Rule: decide before the money arrives
 

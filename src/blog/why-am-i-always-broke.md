@@ -74,7 +74,7 @@ The subscriptions you forgot, the convenience deliveries, the top-up here and th
 
 ### 7. Lifestyle creep: the raise vanished into your life (Leak)
 
-Income went up, and so, almost invisibly, did spending. The nicer flat, the upgraded everything, the small luxuries that quietly became baseline. This is why a pay rise so often fails to make anyone feel richer, and why "I'll save once I earn more" keeps not happening. It has a name and its own full breakdown: [lifestyle creep]({{BASE}}blog/lifestyle-creep/).
+Income went up, and so, almost invisibly, did spending. The nicer flat, the upgraded everything, the small luxuries that quietly became baseline. This is why a pay rise so often fails to make anyone feel richer, and why "I'll save once I earn more" keeps not happening. It has a name and its own full breakdown: [lifestyle creep]({{BASE}}blog/lifestyle-creep/). To spot your own, run through these [fifteen lifestyle creep examples]({{BASE}}blog/lifestyle-creep-examples/) with a statement open.
 
 ### 8. Debt drag: interest takes a cut of every paycheck (Load)
 
