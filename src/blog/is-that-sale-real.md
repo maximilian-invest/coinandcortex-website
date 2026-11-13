@@ -1,15 +1,15 @@
 ---
-title: "Is That Sale Real? How Anchoring and 'Was' Prices Trick You (and a 60-Second Check)"
-seo_title: "Anchoring Pricing Examples: Is That Sale Real?"
-description: "Anchoring pricing examples that fool shoppers, what counts as a real 'was' price in the US, EU and UK, and a 60-second check to tell if a sale is real."
+title: Is That Sale Real? How Anchoring and 'Was' Prices Trick You (and a 60-Second Check)
+seo_title: Anchoring Pricing Examples: Is That Sale Real?
+description: Anchoring pricing examples that fool shoppers, what counts as a real 'was' price in the US, EU and UK, and a 60-second check to tell if a sale is real.
 keyword: anchoring pricing examples
 hub: fair-prices
 pillar: false
 image: /assets/img/blog/is-that-sale-real.webp
-image_alt: "Doodle of Sam holding a magnifying glass up to a price tag with a big crossed-out 'was' price and a smaller sale price"
+image_alt: Doodle of Sam holding a magnifying glass up to a price tag with a big crossed-out 'was' price and a smaller sale price
 video: X7BITLlTogA
-definition: "Price anchoring is when a seller shows a high reference number, such as a crossed-out 'was' price or RRP, so a lower price looks like a bargain, whether or not the item ever sold at the higher price."
-takeaways: "Tversky and Kahneman found a random wheel landing on 10 versus 65 shifted people's estimates of African UN membership from about 25% to 45%, so arbitrary anchors move judgments. || Ariely, Loewenstein and Prelec found people shown the high digits of their social security number would pay around $56 for a keyboard, versus about $16 for those shown low digits. || Northcraft and Neale found estate agents valuing the same house were swayed by its arbitrary listing price, yet most denied the listing price had influenced them. || Under the US FTC's Guides Against Deceptive Pricing (16 CFR 233.1), a genuine former price must be one the item was openly offered at, on a regular basis, for a reasonably substantial period. || The EU's price indication rules require any announced reduction to show the lowest price the seller charged in at least the 30 days before the discount."
+definition: Price anchoring is when a seller shows a high reference number, such as a crossed-out 'was' price or RRP, so a lower price looks like a bargain, whether or not the item ever sold at the higher price.
+takeaways: Tversky and Kahneman found a random wheel landing on 10 versus 65 shifted people's estimates of African UN membership from about 25% to 45%, so arbitrary anchors move judgments. || Ariely, Loewenstein and Prelec found people shown the high digits of their social security number would pay around $56 for a keyboard, versus about $16 for those shown low digits. || Northcraft and Neale found estate agents valuing the same house were swayed by its arbitrary listing price, yet most denied the listing price had influenced them. || Under the US FTC's Guides Against Deceptive Pricing (16 CFR 233.1), a genuine former price must be one the item was openly offered at, on a regular basis, for a reasonably substantial period. || The EU's price indication rules require any announced reduction to show the lowest price the seller charged in at least the 30 days before the discount.
 date: 2026-11-13
 updated: 2026-11-13
 ---
