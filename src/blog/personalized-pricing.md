@@ -105,7 +105,7 @@ Notice that three of the four are things you *do*, not things you *are*. That is
 
 **Myth: "Clearing cookies always gets a better deal."** Sometimes a fresh, anonymous visitor is quoted *more*, not less, because the system cannot tell you are a bargain-hunter. The fix is not a ritual, it is comparison. Check more than one way and buy the lower number.
 
-**Mistake: trusting the sale badge.** "40% off" is meaningless without knowing 40% off *what*. In the EU, an advertised price reduction must be measured against the lowest price the trader charged in the previous 30 days, precisely because inflated "was" prices are so common. Trust price history, not the badge.
+**Mistake: trusting the sale badge.** "40% off" is meaningless without knowing 40% off *what*. In the EU, an advertised price reduction must be measured against the lowest price the trader charged in the previous 30 days, precisely because inflated "was" prices are so common. Trust price history, not the badge. For the psychology behind crossed-out prices and a quick test, see [how anchoring and "was" prices trick you]({{BASE}}blog/is-that-sale-real/).
 
 **Mistake: thinking this is only about a few cents on eggs.** The small stuff is small. The big money is in the things you renew on autopilot: insurance, broadband, phone, energy. That is where paying attention pays rent.
 
