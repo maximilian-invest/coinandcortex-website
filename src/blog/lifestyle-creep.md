@@ -135,7 +135,7 @@ The rough test: "bad creep" quietly raises your baseline and you stop noticing i
 
 **Mistake: confusing frugality with misery.** Cutting the cheap pleasures you enjoy while leaving the forgettable upgrades intact is exactly backwards. It feels like deprivation and saves little.
 
-**Big picture: lifestyle creep at the scale of a society.** In an essay from 1930, the economist John Maynard Keynes imagined that rising productivity might eventually allow "three-hour shifts or a fifteen-hour week." Productivity did rise enormously, yet a full-time week is still far longer than that. One common explanation is that our wants grew along with our means, which is lifestyle creep at the scale of a whole society. For how that bargain shook out, see [why we still work 40 hours a week]({{BASE}}blog/why-do-we-work-40-hours-a-week/).
+**Big picture: lifestyle creep at the scale of a society.** In an essay from 1930, the economist John Maynard Keynes imagined that rising productivity might eventually allow "three-hour shifts or a fifteen-hour week." Productivity did rise enormously, yet a full-time week is still far longer than that. One common explanation is that our wants grew along with our means, which is lifestyle creep at the scale of a whole society. For how that bargain shook out, see [why we still work 40 hours a week]({{BASE}}blog/why-do-we-work-40-hours-a-week/), and for the evidence on why the wants won, our breakdown of [why Keynes's 15-hour week never arrived]({{BASE}}blog/keynes-15-hour-work-week/).
 
 ## How to stop lifestyle creep: a step-by-step plan
 
