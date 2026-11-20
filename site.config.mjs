@@ -31,7 +31,7 @@ export default {
   CONTACT_EMAIL: "coinandcortex@gmail.com",
 
   // YouTube channel URL (used for all "Watch on YouTube" links and the footer).
-  YOUTUBE_CHANNEL: "https://www.youtube.com/@coinandcortex",
+  YOUTUBE_CHANNEL: "https://www.youtube.com/@whatactuallyhappenedstories",
 
   // IndexNow key (Bing/Yandex/Seznam instant indexing). Generated once; the
   // build publishes it at /<key>.txt and scripts/indexnow.mjs submits URLs.

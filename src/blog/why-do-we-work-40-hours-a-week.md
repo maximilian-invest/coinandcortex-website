@@ -69,7 +69,7 @@ That is exactly the pattern we call [lifestyle creep]({{BASE}}blog/lifestyle-cre
 
 There is a romantic counter-story that says ancient hunter-gatherers already had something like the 15-hour week, the "original affluent society" that anthropologist Marshall Sahlins described. It is a genuinely debated claim: Sahlins argued that foragers in easy environments met their needs in strikingly few hours, while later time-use work tends to find more work once you count food processing, tool-making, and childcare. Treat the "early humans only worked a few hours" line as contested, not settled.
 
-We're making a short doodle video on this, so if you like the round-headed-character version, [subscribe on YouTube](https://www.youtube.com/@coinandcortex).
+We're making a short doodle video on this, so if you like the round-headed-character version, [subscribe on YouTube](https://www.youtube.com/@whatactuallyhappenedstories).
 
 ## Do longer hours actually produce more?
 
